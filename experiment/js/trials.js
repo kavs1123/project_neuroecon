@@ -146,7 +146,7 @@ const Pages = (() => {
       <p>We were studying whether two common scam techniques change people's decisions:</p>
       <ul>
         <li><b>Framing:</b> describing the same ₹2,000 as something extra you <i>gain</i> by accepting ("you'll get an extra ₹2,000")
-            versus something already yours that you <i>lose</i> by not accepting ("₹2,000 has already been credited… it will be taken back").</li>
+            versus something already yours that you <i>lose</i> by not accepting ("₹2,000 has already been reserved in your name… it will go to the next applicant").</li>
         <li><b>Urgency:</b> countdown timers and "only 2 slots left" messages versus no time pressure.</li>
         <li>We also limited how many details you could check, to see how people decide when checking is costly.</li>
       </ul>
