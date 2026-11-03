@@ -12,11 +12,12 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from common import (ATTN_MAX_INTENT, FRAME_CODE, MIN_MEDIAN_RT_MS, MIN_TRIAL_RT_MS, SCAM_CODE,
+from common import (TEST_SESSIONS, ATTN_MAX_INTENT, FRAME_CODE, MIN_MEDIAN_RT_MS, MIN_TRIAL_RT_MS, SCAM_CODE,
                     TRIAL_LOGRT_SD, URG_CODE, score_crt)
 
 KEYS = ["participant_id", "scenario_id", "is_practice"]
 skipped = []  # files with no trials (declined consent, failed device check)
+test_skipped = []  # researcher test sessions (common.TEST_SESSIONS)
 
 
 def load_raw(raw_dir, include_pilot=False, only_pilot=False):
@@ -24,6 +25,9 @@ def load_raw(raw_dir, include_pilot=False, only_pilot=False):
     global skipped
     for f in sorted(Path(raw_dir).glob("*.csv")):
         df = pd.read_csv(f, low_memory=False)
+        if "participant_id" in df.columns and str(df["participant_id"].iloc[0]) in TEST_SESSIONS:
+            test_skipped.append(f.name)
+            continue
         is_pilot = f.name.startswith("pilot_") or ("pilot" in df.columns and (df["pilot"] == 1).any())
         if (is_pilot and not (include_pilot or only_pilot)) or (only_pilot and not is_pilot):
             continue
@@ -129,6 +133,7 @@ def main():
         "files_participants": int(len(people)) + len(withdrawn),
         "withdrawn_at_reconsent": len(withdrawn),
         "no_trial_files_skipped": len(skipped),
+        "researcher_test_sessions_skipped": len(test_skipped),
         "excluded_participants": people.loc[people["excluded"], "exclusion_reason"].value_counts().to_dict(),
         "valid_participants": int((~people["excluded"]).sum()),
         "per_list_valid": people.loc[~people["excluded"], "list"].value_counts().sort_index().to_dict(),

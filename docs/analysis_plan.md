@@ -25,7 +25,7 @@ Status: **DRAFT v0.2, 3 Nov 2026** (v0.2: models pinned to the implemented stats
 | Trial | `intent` | compliance-intent slider, 0–100 (**primary DV**) |
 | Trial | `legit_rating` | perceived legitimacy, 1–7 |
 | Trial | `urg_check` | felt urgency, 1–7 (manipulation check) |
-| Trial | `frame_check` | "gain" / "loss" forced choice (manipulation check) |
+| Trial | `frame_check` | "How was the ₹2,000 described?" claim/gain vs reserved/could lose (manipulation check; reworded in v0.3.1) |
 | Trial | `heuristic` | mean of "gut feeling" and reverse-scored "carefully checked details" (1–7; high = heuristic) |
 | Trial | `n_cues` | number of hidden cues opened (0–3) |
 | Trial | `cue_dwell_ms` | total time cue panels were open |

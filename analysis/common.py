@@ -15,6 +15,10 @@ FRAME_CODE = {"gain": -0.5, "loss": 0.5}
 URG_CODE = {"low": -0.5, "high": 0.5}
 SCAM_CODE = {"legit": -0.5, "scam": 0.5}
 
+# Researcher test sessions (run by the team, who know the hypotheses): never analysed.
+# 66g2sjysbg = Kavish's end-to-end DataPipe test on 3 Nov 2026 (not tagged as pilot).
+TEST_SESSIONS = {"66g2sjysbg"}
+
 # Exclusion thresholds (docs/analysis_plan.md §3)
 MIN_MEDIAN_RT_MS = 3000
 MIN_TRIAL_RT_MS = 1500

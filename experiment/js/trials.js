@@ -54,10 +54,10 @@ const Pages = (() => {
         ${likert("legit_rating", "Not at all legitimate", "Completely legitimate")}</div>
       <div class="q"><div class="qt">How urgent did this offer feel?</div>
         ${likert("urg_check", "Not at all urgent", "Extremely urgent")}</div>
-      <div class="q"><div class="qt">The message mainly emphasised…</div>
+      <div class="q"><div class="qt">How was the ₹2,000 described in this message?</div>
         <div class="choice-row">
-          <label><input type="radio" name="frame_check" value="gain" required> something I could <b>gain</b></label>
-          <label><input type="radio" name="frame_check" value="loss"> something I could <b>lose</b> / miss out on</label>
+          <label><input type="radio" name="frame_check" value="gain" required> as money I could <b>claim / gain</b></label>
+          <label><input type="radio" name="frame_check" value="loss"> as money already reserved for me that I could <b>lose</b></label>
         </div></div>
       <div class="q"><div class="qt">I decided mostly based on my gut feeling.</div>
         ${likert("gut", "Strongly disagree", "Strongly agree")}</div>

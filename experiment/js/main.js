@@ -11,7 +11,8 @@
   const params = new URLSearchParams(window.location.search);
   const AUTOPILOT = params.get("autopilot") === "1";
   const DEBUG = AUTOPILOT || params.get("debug") === "1";
-  const PILOT = params.get("pilot") === "1";
+  // lenient: ?pilot=1, ?Pilot=1, ?pilot?=1 ... all count as pilot runs
+  const PILOT = [...params.keys()].some((k) => k.toLowerCase().replace(/[^a-z]/g, "") === "pilot");
   const ACCEPT = "Accept offer";
   const IGNORE = "Ignore";
   const usePipe = Boolean(CONFIG.DATAPIPE_EXPERIMENT_ID) && !DEBUG && !params.has("preview");
