@@ -41,9 +41,9 @@ python -m http.server 8000
 6. Copy the **experiment ID** into `experiment/js/config.js` → `DATAPIPE_EXPERIMENT_ID`.
 
 **GitHub Pages (hosting)**
-1. Create a public GitHub repo, e.g. `scam-framing-study`, and push this folder. Data folders are git-ignored.
+1. Repo: https://github.com/kavs1123/project_neuroecon (public; data folders are git-ignored).
 2. In the repo, go to Settings → Pages → *Deploy from a branch* → `main` / `(root)`.
-3. Participant link: `https://<username>.github.io/scam-framing-study/experiment/`
+3. Participant link: `https://kavs1123.github.io/project_neuroecon/experiment/`
 4. Pilot link: the same URL plus `?pilot=1`.
 
 Before sending links, test with `?pilot=1` once and confirm that a `pilot_*.csv` shows up in the OSF component.
