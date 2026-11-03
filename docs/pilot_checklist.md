@@ -16,7 +16,9 @@ Send the **pilot link** (`.../experiment/?pilot=1`). Ideally sit with 1–2 pilo
 ## Check in the data (`preprocess.py --only-pilot`, then `analysis.py`)
 | Check | Target | If it fails |
 |---|---|---|
-| Median duration | ≤ 25 min | shorten: cut the `gut` item or drop to 24 trials (3 per type × cell) |
+| Median duration | ≤ 15 min | shorten further: 16 trials (2 per type × cell) |
+| Expired high-urgency offers | 3–15% | over 15%: raise `DEADLINE_SECONDS` to 25. Under 3%: the deadline isn't biting, so lower it to 15 |
+| Checks used | most people use 15–24 of 24, not all on the first few offers | if the budget is gone by trial 8, people are front-loading: make the counter more prominent |
 | Felt urgency, high vs low | clearly higher (≥ 1.5 points) | make the timer banner bigger; add "slots left" counter to the header |
 | Frame identification | > 65% correct | make the loss line more explicit ("you will LOSE ₹2,000") |
 | Scam intent, mean | 15–50 (not floor) | scams too obvious → soften red flags visible in the chat text |

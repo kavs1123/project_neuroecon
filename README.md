@@ -25,6 +25,17 @@ python -m http.server 8000
 | `?preview=S01&frame=loss&urgency=high` | show a single offer (for reviewing stimuli) |
 | `?autopilot=1` | clicks through by itself (testing only) |
 
+Design settings are in `experiment/js/config.js`:
+- `DEADLINE_SECONDS` (20): how long a high-urgency offer stays open before it expires.
+- `CHECK_BUDGET` (24): detail checks for the whole main part.
+- `CHECK_DELAY_MS` (1200): how long a check takes to load.
+- `PRACTICE_CHECKS` (3): checks for the two practice offers.
+
+Bump `STUDY_VERSION` whenever you change any of them.
+
+To test the slider in a real browser (two drags in a row must both move it):
+`node --experimental-websocket experiment/tools/slider_drag_test.mjs "<path to chrome.exe>" http://127.0.0.1:8000`
+
 **End-to-end test without a human:** run headless Chrome with `?autopilot=1&list=N` and `--dump-dom`, then use `experiment/tools/extract_autopilot_csv.py` to pull the CSV out of the page.
 
 ## 2. Deploy (one-time setup, ~15 min)

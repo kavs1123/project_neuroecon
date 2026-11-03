@@ -5,6 +5,9 @@ the pipeline recovers planted effects, (3) a simulation-based power/sensitivity 
 
     python analysis/simulate.py --n 30 --out data/simulated/raw --seed 1
 
+Design v0.4: 12 scam + 12 legit offers, 20 s deadline on high-urgency offers (some expire), a check budget
+(~1 per offer), one 'deliberation' item instead of gut/careful, no legitimacy rating.
+
 Planted effects on scam-trial intent (0-100 scale), effect-coded predictors (+-0.5):
     frame (loss-gain) = +3, urgency (high-low) = +6, frame x urgency = +8,
     each revealed cue lowers intent by 5 points; urgency lowers cues revealed.
@@ -18,7 +21,8 @@ import pandas as pd
 
 from common import STIMULI, CELLS
 
-DEFAULT_EFFECTS = dict(frame=3.0, urgency=6.0, interaction=8.0, cue_b=-5.0, urg_on_cues=-0.35)
+DEFAULT_EFFECTS = dict(frame=3.0, urgency=6.0, interaction=8.0, cue_b=-5.0, urg_on_cues=-0.35, p_timeout=0.03)
+DEADLINE_S = 20
 
 
 def simulate_participant(pid, list_idx, stim, rng, eff, kind="normal"):
@@ -39,7 +43,7 @@ def simulate_participant(pid, list_idx, stim, rng, eff, kind="normal"):
             trials.append((sc, type_, frame, urg, cell))
     order = rng.permutation(len(trials))
     trials = [trials[k] for k in order]
-    att_pos = rng.integers(12, 25)
+    att_pos = rng.integers(8, 17)
     trials.insert(att_pos, (stim["attention_check"], "check", "none", "none", "attention"))
 
     common = dict(participant_id=pid, list=list_idx, list_source="sim", accept_button_side=button_side,
@@ -52,7 +56,7 @@ def simulate_participant(pid, list_idx, stim, rng, eff, kind="normal"):
         base = dict(scenario_id=p_sc["id"], offer_type=p_type, frame=p_frame, urgency=p_urg,
                     cell=f"{p_frame}_{p_urg}", is_practice=1, trial_num=-1)
         rows.append(dict(task="offer", rt=15000, choice="ignore", accept=0, n_cues=1, **base))
-        rows.append(dict(task="ratings", rt=12000, intent=40, legit_rating=4, urg_check=4, frame_check="gain", gut=4, careful=4, **base))
+        rows.append(dict(task="ratings", rt=9000, intent=40, urg_check=4, frame_check="gain", deliberation=4, **base))
 
     for t, (sc, type_, frame, urg, cell) in enumerate(trials, start=1):
         base = dict(scenario_id=sc["id"], offer_type=type_, frame=frame, urgency=urg, cell=cell,
@@ -61,25 +65,26 @@ def simulate_participant(pid, list_idx, stim, rng, eff, kind="normal"):
             fail = kind == "attention_fail"
             rt = rng.lognormal(np.log(9000), 0.3)
             rows.append(dict(task="offer", rt=round(rt), choice="accept" if fail else "ignore", accept=int(fail), n_cues=0, **base))
-            rows.append(dict(task="ratings", rt=8000, intent=70 if fail else 0, legit_rating=1, urg_check=1, frame_check="gain", gut=4, careful=4, **base))
+            rows.append(dict(task="ratings", rt=8000, intent=70 if fail else 0, urg_check=1, frame_check="gain", deliberation=4, **base))
             continue
         f = -0.5 if frame == "gain" else 0.5
         g = -0.5 if urg == "low" else 0.5
-        lam = np.exp(np.log(1.4) + cue_tend + eff["urg_on_cues"] * g)
+        lam = np.exp(np.log(0.9) + cue_tend + eff["urg_on_cues"] * g)
         n_cues = int(min(3, rng.poisson(lam)))
         if kind == "speeder":
             n_cues = 0
         opened = list(rng.choice(["sender", "company", "payment"], size=n_cues, replace=False)) if n_cues else []
         if type_ == "scam":
-            mu = 30 + u - sens + item_eff[sc["id"]] + eff["frame"] * f + eff["urgency"] * g + eff["interaction"] * f * g + eff["cue_b"] * (n_cues - 1.4)
+            mu = 30 + u - sens + item_eff[sc["id"]] + eff["frame"] * f + eff["urgency"] * g + eff["interaction"] * f * g + eff["cue_b"] * (n_cues - 0.9)
         else:
             mu = 62 + u + sens + item_eff[sc["id"]] + 2 * g
         intent = float(np.clip(np.round(mu + rng.normal(0, 15)), 0, 100))
         accept = int(rng.random() < 1 / (1 + np.exp(-(intent - 50) / 8)))
-        rt = rng.lognormal(np.log(14000) + 0.25 * n_cues - 0.15 * g + rt_person, 0.35)
+        rt = rng.lognormal(np.log(9000) + 0.25 * n_cues - 0.15 * g + rt_person, 0.35)
         if kind == "speeder":
             rt = rng.lognormal(np.log(1800), 0.2)
         rt = round(rt)
+        timeout = urg == "high" and (rt > DEADLINE_S * 1000 or rng.random() < eff["p_timeout"])
         # cue events consistent with n_cues
         ev, tcur, dwell = [], 800, {"sender": 0, "company": 0, "payment": 0}
         for c in opened:
@@ -88,19 +93,19 @@ def simulate_participant(pid, list_idx, stim, rng, eff, kind="normal"):
             dwell[c] = ev[-1]["close"] - tcur
             tcur += d + 300
         rows.append(dict(
-            task="offer", rt=rt, response=0 if accept else 1, choice="accept" if accept else "ignore", accept=accept,
+            task="offer", rt=None if timeout else rt, response=None if timeout else (0 if accept else 1),
+            choice="timeout" if timeout else ("accept" if accept else "ignore"), accept=None if timeout else accept,
+            timeout=int(timeout), deadline_s=DEADLINE_S if urg == "high" else None, n_checks_denied=0,
             cue_events=json.dumps(ev), n_cues=n_cues, n_cue_opens=n_cues, cue_dwell_ms=sum(dwell.values()),
             dwell_sender_ms=dwell["sender"], dwell_company_ms=dwell["company"], dwell_payment_ms=dwell["payment"],
             opened_sender="sender" in opened, opened_company="company" in opened, opened_payment="payment" in opened,
             first_cue_ms=ev[0]["open"] if ev else None, mouse_tracking_data="[]", **base))
         urg_check = int(np.clip(np.round(2.8 + 2.4 * (g + 0.5) + rng.normal(0, 1.1)), 1, 7))
         frame_check = frame if rng.random() < 0.8 else ("loss" if frame == "gain" else "gain")
-        gut = int(np.clip(np.round(4 + 1.2 * g - 0.5 * (n_cues - 1.4) + rng.normal(0, 1.2)), 1, 7))
-        careful = int(np.clip(np.round(4 - 1.0 * g + 0.7 * (n_cues - 1.4) + rng.normal(0, 1.2)), 1, 7))
-        legit_rating = int(np.clip(np.round(1 + 6 * intent / 100 + rng.normal(0, 0.8)), 1, 7))
-        rows.append(dict(task="ratings", rt=round(rng.lognormal(np.log(11000), 0.3)), intent=intent, legit_rating=legit_rating,
-                         urg_check=urg_check, frame_check=frame_check, gut=gut, careful=careful, **base))
-        if t == 16:
+        deliberation = int(np.clip(np.round(4 - 1.1 * g + 0.7 * (n_cues - 0.9) + rng.normal(0, 1.2)), 1, 7))
+        rows.append(dict(task="ratings", rt=round(rng.lognormal(np.log(8000), 0.3)), intent=intent,
+                         urg_check=urg_check, frame_check=frame_check, deliberation=deliberation, **base))
+        if t == 12:
             rows.append(dict(task="break", rt=3000))
 
     p_crt = rng.beta(3, 2)

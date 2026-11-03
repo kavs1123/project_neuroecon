@@ -1,5 +1,5 @@
 {
-  "_readme": "Stimulus battery v0.2 (DRAFT for team realism review). Each scenario is framing/urgency-neutral; the renderer inserts {FRAME} and {URGENCY} slot text from 'frames' and 'urgency' below, giving 4 variants per scenario. All company names, people, phone numbers and handles are fictional. Phone numbers use the UK Ofcom fiction range (+44 7700 900xxx). Cell assignment is NOT stored here: lists.js assigns scenario i (within type) to cell (i + list) % 4, cells = [gain_high, gain_low, loss_high, loss_low]. v0.2: header shows display name only (number/business status moved into the 'Sender profile' cue); solicitation style, sender naming and emoji use mixed across scam/legit so they are not trivial giveaways; emojis removed from frame lines (the warning emoji confounded loss-frame with urgency).",
+  "_readme": "Stimulus battery v0.3 (DRAFT for team realism review). Each scenario is framing/urgency-neutral; the renderer inserts {FRAME} and {URGENCY} slot text from 'frames' and 'urgency' below, giving 4 variants per scenario. All company names, people, phone numbers and handles are fictional. Phone numbers use the UK Ofcom fiction range (+44 7700 900xxx). Cell assignment is NOT stored here: lists.js assigns scenario i (within type) to cell (i + list) % 4, cells = [gain_high, gain_low, loss_high, loss_low]. v0.2: header shows display name only (number/business status moved into the 'Sender profile' cue); solicitation style, sender naming and emoji use mixed across scam/legit so they are not trivial giveaways; emojis removed from frame lines (the warning emoji confounded loss-frame with urgency). v0.3: 12 scam + 12 legit active scenarios (3 per type x cell per list); 8 near-duplicate domains moved to 'reserve_scenarios' (not shown) to shorten the session.",
   "constants": {
     "amount": "₹2,000",
     "scam_fee": "₹500",
@@ -162,25 +162,6 @@
       }
     },
     {
-      "id": "S04",
-      "type": "scam",
-      "domain": "Video engagement",
-      "sender": "Karan | ViewWorks Media",
-      "sender_sub": "+44 7700 900309",
-      "messages": [
-        "Hey! Karan from ViewWorks Media here. We pay people to like and subscribe to videos 😊",
-        "Each like pays ₹50. Simple task, 10–20 minutes a day, earn ₹600–900 daily.",
-        "You'll be added to our members group once you register.",
-        "{FRAME}",
-        "{URGENCY}"
-      ],
-      "cues": {
-        "sender": "+44 7700 900309 · Unsaved international number · same profile photo found on 3 other accounts.",
-        "company": "'ViewWorks Media' is not a registered company. Website domain registered 14 days ago.",
-        "payment": "Upgrading to a 'VIP task level' to receive payouts requires a ₹500 deposit via UPI to a personal ID."
-      }
-    },
-    {
       "id": "S05",
       "type": "scam",
       "domain": "Data verification",
@@ -235,25 +216,6 @@
         "sender": "+44 7700 900815 · Unsaved international number · account created 5 days ago · not a verified business.",
         "company": "No registered company named 'CartRise Merchant Services'. No website.",
         "payment": "You must top up ₹500 of your own money via UPI to a personal ID to unlock 'order tasks'."
-      }
-    },
-    {
-      "id": "S08",
-      "type": "scam",
-      "domain": "Map location rating",
-      "sender": "Divya | LocalStar Reviews",
-      "sender_sub": "+44 7700 900176",
-      "messages": [
-        "Hi there! Divya from LocalStar Reviews 😊 Quick part-time opportunity for you.",
-        "Rate local businesses on online maps — ₹150 per rating, 30 seconds each.",
-        "Earn ₹800–1,500 daily, paid every evening.",
-        "{FRAME}",
-        "{URGENCY}"
-      ],
-      "cues": {
-        "sender": "+44 7700 900176 · Unsaved international number · profile name changed twice this week.",
-        "company": "'LocalStar Reviews' has no registration, no office address and no website.",
-        "payment": "Before payout you must deposit ₹500 via UPI to a personal ID to 'verify your bank account'."
       }
     },
     {
@@ -314,25 +276,6 @@
       }
     },
     {
-      "id": "S12",
-      "type": "scam",
-      "domain": "Playlist rating",
-      "sender": "Isha | TuneMetric",
-      "sender_sub": "+44 7700 900259",
-      "messages": [
-        "Hi! Isha from TuneMetric 🎵 We hire music listeners to rate songs for labels.",
-        "Listen to 30-second clips and rate them. ₹60 per song, around ₹900 per day.",
-        "Fully remote, work any time.",
-        "{FRAME}",
-        "{URGENCY}"
-      ],
-      "cues": {
-        "sender": "+44 7700 900259 · Unsaved international number · not a verified business · account created 9 days ago.",
-        "company": "'TuneMetric' has no company registration and no label partnerships listed anywhere.",
-        "payment": "To start earning you must pay a ₹500 'membership fee' via UPI to a personal ID."
-      }
-    },
-    {
       "id": "S13",
       "type": "scam",
       "domain": "Restaurant review",
@@ -349,25 +292,6 @@
         "sender": "+44 7700 900934 · Unsaved international number · profile photo found on a stock-image site.",
         "company": "No registered company named 'FoodieScore'. No office address.",
         "payment": "First payout requires a ₹500 'verification deposit' via UPI to a personal ID."
-      }
-    },
-    {
-      "id": "S14",
-      "type": "scam",
-      "domain": "Captcha typing",
-      "sender": "Anjali | TypeEarn Solutions",
-      "sender_sub": "+44 7700 900471",
-      "messages": [
-        "Hi! Anjali from TypeEarn Solutions 👋 Simple typing work available.",
-        "Type captcha codes from images. ₹1 per captcha, most members do 1,000+ a day.",
-        "Work from home on your phone or laptop.",
-        "{FRAME}",
-        "{URGENCY}"
-      ],
-      "cues": {
-        "sender": "+44 7700 900471 · Unsaved international number · account created 1 day ago · not a verified business.",
-        "company": "'TypeEarn Solutions' is not registered. Website copied from another site.",
-        "payment": "You must buy a ₹500 'work ID' via UPI to a personal ID before your first task."
       }
     },
     {
@@ -504,25 +428,6 @@
       }
     },
     {
-      "id": "L06",
-      "type": "legit",
-      "domain": "Freelance transcription",
-      "sender": "Verbatim Works Talent",
-      "sender_sub": "Business account",
-      "messages": [
-        "Hi, Verbatim Works here. Thanks for your interest in freelance transcription.",
-        "Projects are ₹120 per audio minute, typically 3–5 hrs of audio a week, fully remote.",
-        "Next step: a free 5-minute transcription test, then a freelancer agreement.",
-        "{FRAME}",
-        "{URGENCY}"
-      ],
-      "cues": {
-        "sender": "Verified business account · on the platform since 2018.",
-        "company": "Registered transcription company · 30 staff, 600 freelancers · rating 3.9/5 (140 reviews).",
-        "payment": "Paid monthly by bank transfer per invoice. No fees or deposits at any stage."
-      }
-    },
-    {
       "id": "L07",
       "type": "legit",
       "domain": "Research assistant",
@@ -558,25 +463,6 @@
         "sender": "Verified business account · official domain email.",
         "company": "Registered software company · 150 employees · employee review rating 4.0/5 (240 reviews).",
         "payment": "Paid monthly by bank transfer under a written contract. No fees."
-      }
-    },
-    {
-      "id": "L09",
-      "type": "legit",
-      "domain": "Marketing internship",
-      "sender": "Saffron Leaf Foods HR",
-      "sender_sub": "Business account",
-      "messages": [
-        "Hello from Saffron Leaf Foods! You applied for our marketing internship.",
-        "In-office/hybrid, 2 months, ₹8,000/month stipend, supporting product launches.",
-        "Next step: a group discussion and a short interview.",
-        "{FRAME}",
-        "{URGENCY}"
-      ],
-      "cues": {
-        "sender": "Verified business account · on the platform since 2016.",
-        "company": "Registered FMCG company · 900 employees · employee review rating 3.6/5 (700 reviews).",
-        "payment": "Stipend paid monthly by bank transfer. No fees at any stage."
       }
     },
     {
@@ -618,25 +504,6 @@
       }
     },
     {
-      "id": "L12",
-      "type": "legit",
-      "domain": "Campus ambassador",
-      "sender": "Northstar EdTech Careers",
-      "sender_sub": "Business account",
-      "messages": [
-        "Hi! 👋 Northstar EdTech here. You applied for our campus ambassador program.",
-        "Part-time, 3 months, ₹5,000/month plus performance incentives, running events on campus.",
-        "Next step: a 15-minute video call with our community lead.",
-        "{FRAME}",
-        "{URGENCY}"
-      ],
-      "cues": {
-        "sender": "Verified business account · official domain email.",
-        "company": "Registered edtech company · 300 employees · employee review rating 3.7/5 (260 reviews).",
-        "payment": "Paid monthly by bank transfer with an offer letter. No fees."
-      }
-    },
-    {
       "id": "L13",
       "type": "legit",
       "domain": "Bookkeeping assistant",
@@ -653,25 +520,6 @@
         "sender": "Verified business account · on the platform since 2015.",
         "company": "Registered CA firm · 35 employees · client review rating 4.1/5 (55 reviews).",
         "payment": "Salary paid monthly by bank transfer with payslips. No fees at any stage."
-      }
-    },
-    {
-      "id": "L14",
-      "type": "legit",
-      "domain": "Event coordination",
-      "sender": "Marigold Events HR",
-      "sender_sub": "Business account",
-      "messages": [
-        "Hi! Marigold Events here 🎉 You applied to join our weekend event crew.",
-        "Weekend shifts, ₹1,500 per day, helping coordinate weddings and corporate events in the city.",
-        "Next step: a short in-person orientation at our office.",
-        "{FRAME}",
-        "{URGENCY}"
-      ],
-      "cues": {
-        "sender": "Verified business account · contact matches the company website.",
-        "company": "Registered events company since 2013 · 70 employees · rating 3.9/5 (120 reviews).",
-        "payment": "Paid weekly by bank transfer. No fees or deposits at any stage."
       }
     },
     {
@@ -710,6 +558,160 @@
         "sender": "Verified business account · official domain email.",
         "company": "Registered SaaS company · 250 employees · employee review rating 4.0/5 (190 reviews).",
         "payment": "Stipend paid monthly by bank transfer with an internship letter. No fees."
+      }
+    }
+  ],
+  "reserve_scenarios": [
+    {
+      "id": "S04",
+      "type": "scam",
+      "domain": "Video engagement",
+      "sender": "Karan | ViewWorks Media",
+      "sender_sub": "+44 7700 900309",
+      "messages": [
+        "Hey! Karan from ViewWorks Media here. We pay people to like and subscribe to videos 😊",
+        "Each like pays ₹50. Simple task, 10–20 minutes a day, earn ₹600–900 daily.",
+        "You'll be added to our members group once you register.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "+44 7700 900309 · Unsaved international number · same profile photo found on 3 other accounts.",
+        "company": "'ViewWorks Media' is not a registered company. Website domain registered 14 days ago.",
+        "payment": "Upgrading to a 'VIP task level' to receive payouts requires a ₹500 deposit via UPI to a personal ID."
+      }
+    },
+    {
+      "id": "S08",
+      "type": "scam",
+      "domain": "Map location rating",
+      "sender": "Divya | LocalStar Reviews",
+      "sender_sub": "+44 7700 900176",
+      "messages": [
+        "Hi there! Divya from LocalStar Reviews 😊 Quick part-time opportunity for you.",
+        "Rate local businesses on online maps — ₹150 per rating, 30 seconds each.",
+        "Earn ₹800–1,500 daily, paid every evening.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "+44 7700 900176 · Unsaved international number · profile name changed twice this week.",
+        "company": "'LocalStar Reviews' has no registration, no office address and no website.",
+        "payment": "Before payout you must deposit ₹500 via UPI to a personal ID to 'verify your bank account'."
+      }
+    },
+    {
+      "id": "S12",
+      "type": "scam",
+      "domain": "Playlist rating",
+      "sender": "Isha | TuneMetric",
+      "sender_sub": "+44 7700 900259",
+      "messages": [
+        "Hi! Isha from TuneMetric 🎵 We hire music listeners to rate songs for labels.",
+        "Listen to 30-second clips and rate them. ₹60 per song, around ₹900 per day.",
+        "Fully remote, work any time.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "+44 7700 900259 · Unsaved international number · not a verified business · account created 9 days ago.",
+        "company": "'TuneMetric' has no company registration and no label partnerships listed anywhere.",
+        "payment": "To start earning you must pay a ₹500 'membership fee' via UPI to a personal ID."
+      }
+    },
+    {
+      "id": "S14",
+      "type": "scam",
+      "domain": "Captcha typing",
+      "sender": "Anjali | TypeEarn Solutions",
+      "sender_sub": "+44 7700 900471",
+      "messages": [
+        "Hi! Anjali from TypeEarn Solutions 👋 Simple typing work available.",
+        "Type captcha codes from images. ₹1 per captcha, most members do 1,000+ a day.",
+        "Work from home on your phone or laptop.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "+44 7700 900471 · Unsaved international number · account created 1 day ago · not a verified business.",
+        "company": "'TypeEarn Solutions' is not registered. Website copied from another site.",
+        "payment": "You must buy a ₹500 'work ID' via UPI to a personal ID before your first task."
+      }
+    },
+    {
+      "id": "L06",
+      "type": "legit",
+      "domain": "Freelance transcription",
+      "sender": "Verbatim Works Talent",
+      "sender_sub": "Business account",
+      "messages": [
+        "Hi, Verbatim Works here. Thanks for your interest in freelance transcription.",
+        "Projects are ₹120 per audio minute, typically 3–5 hrs of audio a week, fully remote.",
+        "Next step: a free 5-minute transcription test, then a freelancer agreement.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "Verified business account · on the platform since 2018.",
+        "company": "Registered transcription company · 30 staff, 600 freelancers · rating 3.9/5 (140 reviews).",
+        "payment": "Paid monthly by bank transfer per invoice. No fees or deposits at any stage."
+      }
+    },
+    {
+      "id": "L09",
+      "type": "legit",
+      "domain": "Marketing internship",
+      "sender": "Saffron Leaf Foods HR",
+      "sender_sub": "Business account",
+      "messages": [
+        "Hello from Saffron Leaf Foods! You applied for our marketing internship.",
+        "In-office/hybrid, 2 months, ₹8,000/month stipend, supporting product launches.",
+        "Next step: a group discussion and a short interview.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "Verified business account · on the platform since 2016.",
+        "company": "Registered FMCG company · 900 employees · employee review rating 3.6/5 (700 reviews).",
+        "payment": "Stipend paid monthly by bank transfer. No fees at any stage."
+      }
+    },
+    {
+      "id": "L12",
+      "type": "legit",
+      "domain": "Campus ambassador",
+      "sender": "Northstar EdTech Careers",
+      "sender_sub": "Business account",
+      "messages": [
+        "Hi! 👋 Northstar EdTech here. You applied for our campus ambassador program.",
+        "Part-time, 3 months, ₹5,000/month plus performance incentives, running events on campus.",
+        "Next step: a 15-minute video call with our community lead.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "Verified business account · official domain email.",
+        "company": "Registered edtech company · 300 employees · employee review rating 3.7/5 (260 reviews).",
+        "payment": "Paid monthly by bank transfer with an offer letter. No fees."
+      }
+    },
+    {
+      "id": "L14",
+      "type": "legit",
+      "domain": "Event coordination",
+      "sender": "Marigold Events HR",
+      "sender_sub": "Business account",
+      "messages": [
+        "Hi! Marigold Events here 🎉 You applied to join our weekend event crew.",
+        "Weekend shifts, ₹1,500 per day, helping coordinate weddings and corporate events in the city.",
+        "Next step: a short in-person orientation at our office.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "Verified business account · contact matches the company website.",
+        "company": "Registered events company since 2013 · 70 employees · rating 3.9/5 (120 reviews).",
+        "payment": "Paid weekly by bank transfer. No fees or deposits at any stage."
       }
     }
   ]

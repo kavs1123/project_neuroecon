@@ -11,8 +11,8 @@ const Pages = (() => {
       <h2>Evaluating remote-job offers received on messaging apps</h2>
       <p>Thank you for your interest. This short study is part of a university Neuroeconomics course project
       (${CONFIG.TEAM}).</p>
-      <p><b>What you will do.</b> You will read about 30 short chat messages offering remote or part-time work, decide
-      how you would respond to each, and answer a few quick questions. It takes about <b>20 minutes</b>.
+      <p><b>What you will do.</b> You will read about 25 short chat messages offering remote or part-time work, decide
+      how you would respond to each, and answer a few quick questions. It takes about <b>12–15 minutes</b>.
       Please use a laptop or desktop computer.</p>
       <p><b>Your data.</b> Participation is anonymous. We do not ask for your name, phone number or email. You get a random ID,
       and responses are used only for this course project, in aggregate.</p>
@@ -32,26 +32,29 @@ const Pages = (() => {
       <p>For each message:</p>
       <ol>
         <li><b>Read</b> the chat on the left.</li>
-        <li>If you want, <b>check details</b> about the sender, company and payment terms in the boxes on the right
-            (click a box to open it). This is optional: check as much or as little as you would in real life.</li>
+        <li>If you want, <b>check details</b> about the sender, company or payment terms in the boxes on the right.</li>
         <li>Decide: <b>Accept offer</b> (you'd go ahead and register/apply) or <b>Ignore</b>.</li>
         <li>Answer a few quick questions about that message.</li>
-      </ol></div>`,
+      </ol>
+      <p><b>Checks are limited.</b> You have <b>${CONFIG.CHECK_BUDGET} checks for the whole study</b> (about one per message).
+      Each new box you open uses one check and takes a moment to load. When your checks run out, the boxes lock.
+      So decide where checking is worth it, just as in real life, where you can't look up every message.</p></div>`,
     `<div class="text-page"><h2>Instructions (3/3)</h2>
+      <p><b>Some offers have a timer.</b> The timers are real: if the timer runs out before you decide, the offer
+      <b>expires</b> and counts as not accepted.</p>
       <p>There are no right or wrong answers. Please respond as you <b>genuinely</b> would if the message were real.</p>
-      <p>We'll start with <b>2 practice messages</b>, then the main part (about 30 messages).</p></div>`,
+      <p>We'll start with <b>2 practice messages</b> (with ${CONFIG.PRACTICE_CHECKS} practice checks), then the main part
+      (about 25 messages).</p></div>`,
   ];
 
-  const ratings = (sc) => `
+  const ratings = (sc, timedOut) => `
     <div class="rate-form">
-      <div class="about">About the offer from <b>${sc.sender}</b></div>
+      <div class="about">${timedOut ? "The offer expired. " : ""}About the offer from <b>${sc.sender}</b></div>
       <div class="q"><div class="qt">How likely would you be to accept this offer and register / apply?</div>
         <div class="slider-wrap">
-          <input type="range" id="intent" name="intent" min="0" max="100" step="1" value="50" class="untouched">
-          <div class="slider-ends"><span>0 — Not at all likely</span><span id="intent-val">Move the slider</span><span>100 — Extremely likely</span></div>
+          <input type="range" id="intent" name="intent" min="0" max="100" step="1" value="50">
+          <div class="slider-ends"><span>0: Not at all likely</span><span id="intent-val">Move the slider</span><span>100: Extremely likely</span></div>
         </div></div>
-      <div class="q"><div class="qt">How legitimate does this offer seem?</div>
-        ${likert("legit_rating", "Not at all legitimate", "Completely legitimate")}</div>
       <div class="q"><div class="qt">How urgent did this offer feel?</div>
         ${likert("urg_check", "Not at all urgent", "Extremely urgent")}</div>
       <div class="q"><div class="qt">How was the ₹2,000 described in this message?</div>
@@ -59,24 +62,22 @@ const Pages = (() => {
           <label><input type="radio" name="frame_check" value="gain" required> as money I could <b>claim / gain</b></label>
           <label><input type="radio" name="frame_check" value="loss"> as money already reserved for me that I could <b>lose</b></label>
         </div></div>
-      <div class="q"><div class="qt">I decided mostly based on my gut feeling.</div>
-        ${likert("gut", "Strongly disagree", "Strongly agree")}</div>
-      <div class="q"><div class="qt">I carefully checked the details before deciding.</div>
-        ${likert("careful", "Strongly disagree", "Strongly agree")}</div>
+      <div class="q"><div class="qt">How did you make this decision?</div>
+        ${likert("deliberation", "Mostly on gut feeling", "Carefully weighed the details")}</div>
     </div>`;
 
-  /** Slider must be touched before the form can be submitted. */
+  /** The slider must be moved (or clicked) at least once before the form can be submitted.
+   *  No styling changes while dragging (v0.3 hid the thumb until first touch, which made dragging unreliable). */
   function armSlider() {
     const r = document.getElementById("intent");
     const out = document.getElementById("intent-val");
     if (!r) return;
     r.setCustomValidity("Please move the slider to give your answer.");
     const touch = () => {
-      r.classList.remove("untouched");
       r.setCustomValidity("");
       out.textContent = `Your answer: ${r.value}`;
     };
-    ["input", "change", "pointerdown"].forEach((ev) => r.addEventListener(ev, touch));
+    ["input", "change", "pointerup", "keyup"].forEach((ev) => r.addEventListener(ev, touch));
   }
 
   // CRT-2 (Thomson & Oppenheimer, 2016) — less familiar to students than the classic CRT-3.
@@ -139,7 +140,7 @@ const Pages = (() => {
     const scams = stim.scenarios.filter((s) => s.type === "scam");
     return `
     <div class="text-page"><h2>What this study was really about</h2>
-      <p>Thank you! We now need to tell you more about the study. <b>Half of the job offers you saw (16 of 32) were modelled on
+      <p>Thank you! We now need to tell you more about the study. <b>Half of the job offers you saw (${scams.length} of ${stim.scenarios.length}) were modelled on
       real "task-based job" scams</b> that circulate on messaging apps. The other half resembled legitimate offers.
       All names, numbers and companies were fictional.</p>
       <p>We were studying whether two common scam techniques change people's decisions:</p>
@@ -147,6 +148,7 @@ const Pages = (() => {
         <li><b>Framing:</b> describing the payoff as something to <i>gain</i> ("claim your ₹2,000") versus something you'll <i>lose</i>
             ("avoid losing the ₹2,000 reserved in your name").</li>
         <li><b>Urgency:</b> countdown timers and "only 2 slots left" messages versus no time pressure.</li>
+        <li>We also limited how many details you could check, to see how people decide when checking is costly.</li>
       </ul>
       <p>We could not tell you this at the start, because knowing it would have changed how you responded.</p>
       <h3>The scam offers were from:</h3>

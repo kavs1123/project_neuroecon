@@ -72,9 +72,9 @@ p.lead { font-size: 18px; }
 .rate-form .about { text-align: center; color: var(--muted); margin-bottom: 14px; }
 .q { margin: 0 0 18px; }
 .q .qt { font-weight: 600; margin-bottom: 6px; }
-.slider-wrap input[type=range] { width: 100%; }
-.slider-wrap input[type=range].untouched::-webkit-slider-thumb { opacity: 0; }
-.slider-wrap input[type=range].untouched::-moz-range-thumb { opacity: 0; }
+/* plain native slider: no thumb tricks; no text selection while dragging; no touch scrolling on it */
+.slider-wrap { user-select: none; -webkit-user-select: none; }
+.slider-wrap input[type=range] { width: 100%; touch-action: none; cursor: pointer; margin: 6px 0; }
 .slider-ends { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); }
 .likert { display: flex; justify-content: space-between; gap: 4px; }
 .likert label { flex: 1; text-align: center; font-size: 13px; cursor: pointer; }
@@ -91,3 +91,18 @@ textarea { min-height: 64px; }
 /* ---------- debrief ---------- */
 .scam-list { columns: 2; font-size: 14px; }
 .flag-list li { margin-bottom: 6px; }
+
+/* ---------- v0.4: check budget, checking delay, real deadline ---------- */
+.checks-left { font-weight: 600; color: var(--accent); font-size: 14px; }
+.checks-left.none-left { color: var(--urgent); }
+.cue.locked .cue-head { color: #9aa3b0; cursor: not-allowed; background: #f4f5f7; }
+.cue.locked .cue-head .chev::after { content: " 🔒"; font-size: 12px; }
+.cue.denied { animation: shake .35s; border-color: var(--urgent); }
+@keyframes shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+.checking { color: var(--muted); font-style: italic; }
+.checking::after { content: ""; display: inline-block; width: 10px; height: 10px; margin-left: 6px; border: 2px solid #b8c0cc;
+  border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; vertical-align: -1px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.timer.last-seconds { animation: pulse 1s infinite; }
+@keyframes pulse { 50% { opacity: .45; } }
+.expired h2 { color: var(--urgent); }

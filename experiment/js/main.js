@@ -102,16 +102,18 @@
       };
       setTimeout(step, 40);
     },
-    offer(type) {
+    offer(type, timed) {
+      if (timed && Math.random() < 0.2) return; // let the deadline expire (tests the timeout path)
       const cues = [...document.querySelectorAll(".cue-head")];
-      const k = rand(4);
-      cues.slice(0, k).forEach((c, i) => setTimeout(() => c.click(), 300 * (i + 1)));
+      const k = rand(3);
+      const step = CONFIG.CHECK_DELAY_MS + 300;
+      cues.slice(0, k).forEach((c, i) => setTimeout(() => c.click(), step * i + 200));
       const pAccept = type === "scam" ? 0.35 : type === "legit" ? 0.7 : 0;
       const label = Math.random() < pAccept ? ACCEPT : IGNORE;
       setTimeout(() => {
         const btn = [...document.querySelectorAll("#jspsych-html-button-response-btngroup button")].find((b) => b.textContent === label);
         btn.click();
-      }, 300 * (k + 1) + 2500 + rand(4000));
+      }, step * k + 1500 + rand(4000));
     },
     form(attention) {
       setTimeout(() => {
@@ -146,40 +148,58 @@
     const base = {
       scenario_id: sc.id, offer_type: sc.type, frame, urgency, cell, domain: sc.domain, sender: sc.sender, ...meta,
     };
+    const timed = Chat.hasTimer(sc, urgency, stim);
+    const deadline = timed ? CONFIG.DEADLINE_SECONDS : null;
+    let timedOut = false;
     const offer = {
       type: jsPsychHtmlButtonResponse,
-      stimulus: Chat.render(sc, frame, urgency, stim),
+      stimulus: Chat.render(sc, frame, urgency, stim, CONFIG.DEADLINE_SECONDS),
       choices: buttonOrder,
       button_html: (choice) => `<button class="jspsych-btn decision-btn">${choice}</button>`,
+      trial_duration: timed ? CONFIG.DEADLINE_SECONDS * 1000 : null, // the offer really expires
       save_trial_parameters: { stimulus: false },
-      data: { task: "offer", ...base },
+      data: { task: "offer", deadline_s: deadline, ...base },
       extensions: [{
         type: jsPsychExtensionMouseTracking,
         params: { targets: ["#phone", ".cue-panel", '#jspsych-html-button-response-btngroup [data-choice="0"]', '#jspsych-html-button-response-btngroup [data-choice="1"]'], events: ["mousemove", "mousedown"] },
       }],
-      on_load: () => { currentOffer = Chat.attach(document.querySelector("#jspsych-content"), stim.constants.countdown_seconds); },
-      on_finish: (data) => {
-        Object.assign(data, currentOffer ? currentOffer.finish(data.rt) : Chat.emptySummary());
-        currentOffer = null;
-        data.choice = buttonOrder[data.response] === ACCEPT ? "accept" : "ignore";
-        data.accept = data.choice === "accept" ? 1 : 0;
+      on_load: () => {
+        currentOffer = Chat.attach(document.querySelector("#jspsych-content"), { deadlineSeconds: deadline, checkDelayMs: CONFIG.CHECK_DELAY_MS });
       },
+      on_finish: (data) => {
+        timedOut = data.response === null || data.response === undefined;
+        if (currentOffer) Object.assign(data, currentOffer.finish(timedOut ? deadline * 1000 : data.rt));
+        currentOffer = null;
+        data.timeout = timedOut ? 1 : 0;
+        data.choice = timedOut ? "timeout" : buttonOrder[data.response] === ACCEPT ? "accept" : "ignore";
+        data.accept = timedOut ? null : data.choice === "accept" ? 1 : 0;
+      },
+    };
+    const expired = {
+      timeline: [{
+        type: jsPsychHtmlButtonResponse,
+        stimulus: `<div class="text-page expired"><h2>⏳ This offer has expired</h2><p class="lead">The timer ran out, so it counts as not accepted.</p></div>`,
+        choices: [],
+        trial_duration: 1800,
+        data: { task: "expired_notice", ...base },
+      }],
+      conditional_function: () => timedOut,
     };
     const ratings = {
       type: jsPsychSurveyHtmlForm,
-      html: Pages.ratings(sc),
+      html: () => Pages.ratings(sc, timedOut),
       button_label: "Continue",
       data: { task: "ratings", ...base },
       on_load: Pages.armSlider,
       on_finish: (data) => {
         const r = data.response || {};
         data.intent = Number(r.intent);
-        ["legit_rating", "urg_check", "gut", "careful"].forEach((k) => (data[k] = r[k] === undefined ? null : Number(r[k])));
+        ["urg_check", "deliberation"].forEach((k) => (data[k] = r[k] === undefined ? null : Number(r[k])));
         data.frame_check = r.frame_check ?? null;
         if (!meta.is_practice) jsPsych.progressBar.progress = ++doneMain / nMain;
       },
     };
-    return [ap(offer, () => Auto.offer(sc.type)), ap(ratings, () => Auto.form(sc.type === "check"))];
+    return [ap(offer, () => Auto.offer(sc.type, timed)), expired, ap(ratings, () => Auto.form(sc.type === "check"))];
   }
 
   // ---------- preview mode: ?preview=S01&frame=loss&urgency=high shows one offer (for review/screenshots) ----------
@@ -188,6 +208,7 @@
     const sc = all.find((s) => s.id === params.get("preview")) || stim.scenarios[0];
     const f = params.get("frame") || "gain";
     const u = params.get("urgency") || "high";
+    Chat.budget.set(CONFIG.PRACTICE_CHECKS);
     jsPsych.run(offerTrial(sc, f, u, `${f}_${u}`, { is_practice: 1, trial_num: 0 }));
     return;
   }
@@ -220,6 +241,7 @@
 
   timeline.push(ap({
     type: jsPsychInstructions, pages: Pages.instructions, show_clickable_nav: true, data: { task: "instructions" },
+    on_finish: () => Chat.budget.set(CONFIG.PRACTICE_CHECKS),
   }, () => Auto.instructions()));
 
   // practice: one legit (gain/low), one scam (loss/high) so both screen types are seen
@@ -228,9 +250,11 @@
   timeline.push(...offerTrial(p2, "loss", "high", "loss_high", { is_practice: 1, trial_num: -1 }));
   timeline.push(ap({
     type: jsPsychHtmlButtonResponse,
-    stimulus: `<div class="text-page"><h2>Practice complete</h2><p class="lead">Now the main part begins. There are ${nMain} messages. Remember: respond as you genuinely would.</p></div>`,
+    stimulus: `<div class="text-page"><h2>Practice complete</h2><p class="lead">Now the main part begins. There are ${nMain} messages,
+      and you have <b>${CONFIG.CHECK_BUDGET} checks</b> for all of them. Remember: respond as you genuinely would.</p></div>`,
     choices: ["Start"],
     data: { task: "practice_end" },
+    on_finish: () => Chat.budget.set(CONFIG.CHECK_BUDGET),
   }, () => Auto.click("#jspsych-html-button-response-btngroup button")));
 
   // main trials: randomised order, attention check inserted in the middle range

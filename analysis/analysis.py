@@ -93,10 +93,10 @@ def describe(t, p):
     para(f"Valid participants: **{s['n_valid']}** of {s['n_files']} (excluded: {s['excluded'] or 'none'}). "
          f"Age M = {s['age_mean']:.1f} (SD {s['age_sd']:.1f}); median duration {s['duration_median_min']:.1f} min. "
          f"Per list: {s['per_list']}. Trials analysed: {s['trials_used']} ({s['trials_excluded']} excluded by RT rules).")
-    para("Descriptives by offer type × cell (trial level):")
-    desc = t.groupby(["offer_type", "cell"]).agg(accept=("accept", "mean"), intent=("intent", "mean"),
-                                                  legit=("legit_rating", "mean"), cues=("n_cues", "mean"),
-                                                  rt_s=("rt_ms", lambda x: x.median() / 1000)).round(3)
+    para("Descriptives by offer type × cell (trial level). `accept` excludes expired offers; `timeout` = share of offers that expired "
+         "(possible only under high urgency); `cues` = detail boxes opened (budget-limited).")
+    desc = t.groupby(["offer_type", "cell"]).agg(accept=("accept", "mean"), timeout=("timeout", "mean"), intent=("intent", "mean"),
+                                                  cues=("n_cues", "mean"), rt_s=("rt_ms", lambda x: x.median() / 1000)).round(3)
     table(desc)
     OUT["descriptives"] = desc.reset_index().to_dict(orient="records")
 
@@ -155,7 +155,10 @@ def h1_h3(scam, people):
          "in the frame effect between high and low urgency (points on the 0–100 scale).")
 
     h("3d. GLMM (logit): accept ~ frame × urgency + (1|participant) + (1|scenario)", 3)
-    g = BinomialBayesMixedGLM.from_formula("accept ~ frame_c * urg_c", VC, scam).fit_vb()
+    para(f"Expired offers excluded from the choice models: {int(scam['timeout'].sum())} of {len(scam)} scam trials "
+         f"(participants were told these count as not accepted; §3f treats them as Ignore as a robustness check).")
+    choice = scam.dropna(subset=["accept"])
+    g = BinomialBayesMixedGLM.from_formula("accept ~ frame_c * urg_c", VC, choice).fit_vb()
     names = g.model.exog_names
     rows = []
     for i, nme in enumerate(names):
@@ -166,7 +169,7 @@ def h1_h3(scam, people):
     table(gt)
     para("Variational-Bayes GLMM (statsmodels); 95% intervals are approximate posterior intervals. "
          "Robustness check: GEE (logit, exchangeable within participant) below.")
-    gee = smf.gee("accept ~ frame_c * urg_c", "participant_id", scam, family=sm.families.Binomial(),
+    gee = smf.gee("accept ~ frame_c * urg_c", "participant_id", choice, family=sm.families.Binomial(),
                   cov_struct=sm.cov_struct.Exchangeable()).fit()
     gee_t = coef_table(gee)
     gee_t["OR"] = np.exp(gee_t["b"])
@@ -184,6 +187,15 @@ def h1_h3(scam, people):
     ct2 = ct2.drop([i for i in ct2.index if "Var" in i], errors="ignore")
     table(ct2)
     OUT["lmm_covariates"] = ct2.reset_index().to_dict(orient="records")
+
+    h("3f. Robustness: expired offers counted as Ignore", 3)
+    rob = scam.assign(accept_all=scam["accept"].fillna(0))
+    gee2 = smf.gee("accept_all ~ frame_c * urg_c", "participant_id", rob, family=sm.families.Binomial(),
+                   cov_struct=sm.cov_struct.Exchangeable()).fit()
+    r2 = coef_table(gee2)
+    r2["OR"] = np.exp(r2["b"])
+    table(r2)
+    OUT["gee_accept_timeouts_as_ignore"] = r2.reset_index().to_dict(orient="records")
     return cm
 
 
@@ -191,6 +203,7 @@ def sdt(t):
     h("4. Signal detection: does urgency hurt discrimination (d′) or shift acceptance bias (c)?")
     para("'Signal' = scam offer, 'yes' response = Ignore. Higher d′ = better at telling scams from legitimate offers. "
          "c is coded so that **higher c = more willing to accept** (fewer Ignore responses overall).")
+    t = t.dropna(subset=["ignore"])  # expired offers have no choice
     gee = smf.gee("ignore ~ scam_c * frame_c * urg_c", "participant_id", t,
                   family=sm.families.Binomial(sm.families.links.Probit()), cov_struct=sm.cov_struct.Exchangeable()).fit()
     ct = coef_table(gee)
@@ -223,15 +236,16 @@ def sdt(t):
 
 def mediation(scam):
     h("5. H4 — mechanism (exploratory multilevel mediation)")
-    para("a path: M ~ frame × urgency + (1|participant). b path: intent ~ M(within) + M(between) + frame × urgency + (1|participant). "
-         "Indirect effect = a × b, 95% Monte Carlo CI (20,000 draws).")
+    para("a path: M ~ frame × urgency + trial position + (1|participant); trial position controls for the shrinking check budget. "
+         "b path: intent ~ M(within) + M(between) + frame × urgency + (1|participant). "
+         "Indirect effect = a × b, 95% Monte Carlo CI (20,000 draws). log RT excludes expired offers.")
     res = []
-    d = scam.copy()
     for m in ["n_cues", "log_rt", "heuristic"]:
+        d = scam.dropna(subset=[m]).copy()
         d[f"{m}_pm"] = d.groupby("participant_id")[m].transform("mean")
         d[f"{m}_w"] = d[m] - d[f"{m}_pm"]
         d[f"{m}_b"] = d[f"{m}_pm"] - d[f"{m}_pm"].mean()
-        fa = smf.mixedlm(f"{m} ~ frame_c * urg_c", d, groups="participant_id").fit(reml=True)
+        fa = smf.mixedlm(f"{m} ~ frame_c * urg_c + trial_c", d, groups="participant_id").fit(reml=True)
         fb = smf.mixedlm(f"intent ~ {m}_w + {m}_b + frame_c * urg_c", d, groups="participant_id").fit(reml=True)
         for x in ["urg_c", "frame_c:urg_c"]:
             a, sa = fa.params[x], fa.bse[x]
@@ -266,6 +280,7 @@ def ez_diffusion(t):
         return v, a, mrt - mdt
 
     rows = []
+    t = t.dropna(subset=["correct"])
     for (pid, urg), g in t.groupby(["participant_id", "urgency"]):
         corr = g[g["correct"] == 1]["rt_ms"] / 1000
         if len(corr) < 3:

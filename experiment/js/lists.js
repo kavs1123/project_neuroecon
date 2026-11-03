@@ -25,6 +25,7 @@ const Lists = (() => {
 
   /** Sanity check used in debug mode: every list balanced. Throws on failure. */
   function check(stim) {
+    const perCell = stim.scenarios.filter((s) => s.type === "scam").length / 4;
     for (let L = 0; L < N_LISTS; L++) {
       const counts = {};
       build(stim, L).forEach((t) => {
@@ -32,7 +33,7 @@ const Lists = (() => {
         counts[k] = (counts[k] || 0) + 1;
       });
       const vals = Object.values(counts);
-      if (vals.length !== 8 || vals.some((v) => v !== 4)) throw new Error(`List ${L} unbalanced: ${JSON.stringify(counts)}`);
+      if (vals.length !== 8 || vals.some((v) => v !== perCell)) throw new Error(`List ${L} unbalanced: ${JSON.stringify(counts)}`);
     }
     return true;
   }

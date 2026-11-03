@@ -12,7 +12,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from common import (TEST_SESSIONS, ATTN_MAX_INTENT, FRAME_CODE, MIN_MEDIAN_RT_MS, MIN_TRIAL_RT_MS, SCAM_CODE,
+from common import (STIMULI, TEST_SESSIONS, ATTN_MAX_INTENT, FRAME_CODE, MIN_MEDIAN_RT_MS, MIN_TRIAL_RT_MS, SCAM_CODE,
                     TRIAL_LOGRT_SD, URG_CODE, score_crt)
 
 KEYS = ["participant_id", "scenario_id", "is_practice"]
@@ -54,20 +54,28 @@ def build(raw):
     raw["participant_id"] = raw["participant_id"].astype(str)
     offers = raw[raw["task"] == "offer"].copy()
     ratings = raw[raw["task"] == "ratings"].copy()
-    rcols = ["intent", "legit_rating", "urg_check", "frame_check", "gut", "careful", "rt"]
+    # v0.4 items: intent, urg_check, frame_check, deliberation; v0.3 also had legit_rating, gut, careful
+    rcols = [c for c in ["intent", "urg_check", "frame_check", "deliberation", "legit_rating", "gut", "careful", "rt"] if c in ratings.columns]
     ratings = ratings[KEYS + rcols].rename(columns={"rt": "ratings_rt_ms"})
     ocols = ["participant_id", "list", "accept_button_side", "trial_num", "scenario_id", "is_practice", "offer_type",
-             "frame", "urgency", "cell", "domain", "rt", "choice", "accept", "n_cues", "n_cue_opens", "cue_dwell_ms",
-             "dwell_sender_ms", "dwell_company_ms", "dwell_payment_ms", "opened_payment", "first_cue_ms"]
+             "frame", "urgency", "cell", "domain", "rt", "choice", "accept", "timeout", "deadline_s", "n_cues", "n_cue_opens",
+             "n_checks_denied", "checks_left_before", "cue_dwell_ms", "dwell_sender_ms", "dwell_company_ms", "dwell_payment_ms",
+             "opened_payment", "first_cue_ms"]
     offers = offers[[c for c in ocols if c in offers.columns]].rename(columns={"rt": "rt_ms"})
     t = offers.merge(ratings, on=KEYS, how="left", validate="one_to_one")
 
     t["is_practice"] = t["is_practice"].astype(int)
-    t["accept"] = t["accept"].astype(int)
+    t["timeout"] = (t["choice"] == "timeout").astype(int)  # expired high-urgency offers: no choice, no RT
+    t["accept"] = pd.to_numeric(t["accept"], errors="coerce").where(t["timeout"] == 0)
     t["ignore"] = 1 - t["accept"]
+    t["rt_ms"] = pd.to_numeric(t["rt_ms"], errors="coerce").where(t["timeout"] == 0)
     t["log_rt"] = np.log(t["rt_ms"])
     t["opened_payment"] = t["opened_payment"].astype(str).str.lower().eq("true").astype(int)
-    t["heuristic"] = (t["gut"] + (8 - t["careful"])) / 2
+    if "deliberation" in t.columns:  # v0.4: one item, 7 = carefully weighed details
+        t["heuristic"] = 8 - t["deliberation"]
+    else:  # v0.3: gut + reverse-scored careful
+        t["heuristic"] = (t["gut"] + (8 - t["careful"])) / 2
+    t["trial_c"] = t["trial_num"] - t["trial_num"].where(t["is_practice"] == 0).mean()
     t["frame_c"] = t["frame"].map(FRAME_CODE)
     t["urg_c"] = t["urgency"].map(URG_CODE)
     t["scam_c"] = t["offer_type"].map(SCAM_CODE)
@@ -97,9 +105,11 @@ def build(raw):
     main = t[(t["is_practice"] == 0) & t["offer_type"].isin(["scam", "legit"])]
     att = t[t["offer_type"] == "check"].set_index("participant_id")
     p["n_main_trials"] = main.groupby("participant_id").size()
+    p["timeout_rate"] = main.groupby("participant_id")["timeout"].mean()
     p["attention_pass"] = ((att["choice"] == "ignore") & (att["intent"] <= ATTN_MAX_INTENT)).reindex(p.index).fillna(False)
     p["median_rt_ms"] = main.groupby("participant_id")["rt_ms"].median()
-    p["completed"] = p["keep_data"].eq(1) & p["n_main_trials"].eq(32)
+    n_expected = len(json.loads(Path(STIMULI).read_text(encoding="utf-8"))["scenarios"])
+    p["completed"] = p["keep_data"].eq(1) & p["n_main_trials"].eq(n_expected)
 
     # ---------- exclusions (analysis_plan §3, in order) ----------
     reason = pd.Series("", index=p.index)
