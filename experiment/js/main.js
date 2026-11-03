@@ -34,6 +34,24 @@
     Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: filename() }).click();
   };
 
+  const THANKS_HTML = "<div class='text-page'><h2>Thank you!</h2><p class='lead'>Your responses have been saved. You can now close this tab.</p></div>";
+
+  // Runs while the final upload is pending (started when the last screen is left).
+  const saveWatch = {
+    timers: [],
+    start() {
+      const set = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
+      this.timers.push(setTimeout(() => set("save-status", "Still saving… this can take up to a minute."), 8000));
+      this.timers.push(setTimeout(() => {
+        set("save-status", "Your responses have almost certainly been saved, so you can close this tab now. "
+          + "If you like, download a backup copy first (optional).");
+        set("save-backup", `<button class="jspsych-btn" id="dl-btn">Download backup copy</button>`);
+        document.getElementById("dl-btn")?.addEventListener("click", download);
+      }, 30000));
+    },
+    stop() { this.timers.forEach(clearTimeout); this.timers = []; },
+  };
+
   const extensions = [{ type: jsPsychExtensionMouseTracking, params: { minimum_sample_time: 50 } }];
   if (usePipe) {
     extensions.push({
@@ -43,12 +61,21 @@
         filename,
         data_string: dataString,
         stream: false,
-        wait_message: "<div class='text-page'><h2>Saving…</h2><p class='lead'>Saving your responses. Please do not close this page.</p></div>",
-        done_message: "<div class='text-page'><h2>Thank you!</h2><p class='lead'>All done. You can now close this tab.</p></div>",
+        // DataPipe can write the file to Drive well before its HTTP reply arrives (the 0.4.1 pilot sat on
+        // "Saving…" although the CSV was already in Drive). So: reassure after a while, offer a backup
+        // download, and draw the final screen ourselves in on_save instead of relying on done_message.
+        wait_message: `<div class='text-page'><h2>Saving…</h2><p class='lead'>Saving your responses. Please do not close this page.</p>
+          <p id="save-status" class="small"></p><p id="save-backup"></p></div>`,
+        done_message: THANKS_HTML,
         on_save: (result) => {
-          if (result.ok) return;
-          document.body.innerHTML = `<div class="text-page" style="margin-top:60px"><h2>Thank you!</h2>
-            <p class="lead">We could not save your responses automatically. Please download your data file and send it to the study team.</p>
+          saveWatch.stop();
+          const display = jsPsych.getDisplayElement();
+          if (result.ok) {
+            display.innerHTML = THANKS_HTML;
+            return;
+          }
+          display.innerHTML = `<div class="text-page"><h2>Thank you!</h2>
+            <p class="lead">We could not confirm that your responses were saved. Please download your data file and send it to the study team.</p>
             <p><button class="jspsych-btn" id="dl-btn">Download data file</button></p></div>`;
           document.getElementById("dl-btn").addEventListener("click", download);
         },
@@ -312,7 +339,11 @@
     stimulus: Pages.educationalDebrief(stim),
     choices: ["Keep my responses in the study", "Withdraw my responses"],
     data: { task: "reconsent" },
-    on_finish: (d) => { status = d.response === 0 ? "complete" : "withdrawn"; d.keep_data = status === "complete" ? 1 : 0; },
+    on_finish: (d) => {
+      status = d.response === 0 ? "complete" : "withdrawn";
+      d.keep_data = status === "complete" ? 1 : 0;
+      if (usePipe) saveWatch.start(); // the upload starts right after this, the last screen
+    },
   }, () => Auto.click("#jspsych-html-button-response-btngroup button")));
 
   // Test mode only: final screen with a download button (+ CSV dump for the autopilot test).
