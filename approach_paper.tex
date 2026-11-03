@@ -1,0 +1,100 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper, margin=0.7in]{geometry}
+\usepackage{times}
+\usepackage{amsmath}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{parskip}
+
+\titlespacing*{\section}{0pt}{7pt}{2pt}
+\titlespacing*{\subsection}{0pt}{5pt}{1pt}
+\setlist{topsep=1.5pt, itemsep=1pt, parsep=0pt, partopsep=0pt}
+
+\title{
+    \vspace{-1.2cm}
+    \textbf{\Large The Role of Information Framing and Urgency Architecture\\ in App-Based Employment Scams} \\[3pt]
+    {\large Project Approach Paper --- Neuroeconomics} \\[4pt]
+    {\normalsize Team 22: Nitin Reddy (2022115002) \quad Kavish Kapoor (2022101074)}
+}
+\date{}
+\author{}
+
+\begin{document}
+
+\maketitle
+\vspace{-1.6cm}
+
+\section{Project Expectations}
+
+\subsection{Context and Core Research Questions}
+App-based employment scams (e.g., Telegram/WhatsApp ``task-based'' fraud) induce victim compliance by coupling two core neuroeconomic levers: \textbf{information framing} (structuring payoffs as potential gains vs. avoided losses) and \textbf{urgency architecture} (countdown timers, limited-slot claims, and artificial deadlines). While prospect theory (Kahneman \& Tversky, 1979) and dual-process models show that loss framing and time pressure individually alter risk preferences and induce heuristic System~1 processing, their joint, interactive influence within cyber-fraud interfaces remains uncharacterized. This project directly addresses this gap through four core research questions:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{RQ1 (Framing Effect):} Does gain- vs.\ loss-framing of fraudulent tasks significantly alter perceived legitimacy and compliance intent?
+    \item \textbf{RQ2 (Urgency Architecture):} Does urgency architecture independently inflate compliance by focusing attentional resources on immediate rewards and restricting deliberation?
+    \item \textbf{RQ3 (Interaction Dynamics):} Does urgency amplify framing effects non-additively by driving participants toward heuristic processing?
+    \item \textbf{RQ4 (Cognitive Mechanism):} Can this interaction be traced to measurable shifts in processing style (heuristic vs.\ deliberative) or behavioral decision latency?
+\end{itemize}
+
+\subsection{Formal Hypotheses}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{H1 (Framing Main Effect):} Gain- vs.\ loss-framing produces a significant main effect on compliance intent, with loss-framed appeals (``avoid losing your reserved bonus'') eliciting greater compliance due to loss aversion.
+    \item \textbf{H2 (Urgency Main Effect):} High-urgency architecture produces significantly higher compliance intent than low-urgency presentations by restricting cognitive deliberation.
+    \item \textbf{H3 (Interaction Effect):} Urgency moderates the framing effect: time pressure increases reliance on heuristic evaluation, producing a larger framing discrepancy under high urgency than low urgency.
+    \item \textbf{H4 (Mechanistic Mediation):} The urgency $\times$ framing interaction on compliance is mediated by self-reported heuristic processing scores and behavioral decision latency.
+\end{itemize}
+
+\subsection{Expected Outcomes and Deliverables}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Validated Stimulus Battery:} Four standardized, ecologically realistic mobile chat stimuli crossing framing and urgency manipulations while holding economic payoffs constant.
+    \item \textbf{Empirical Effect Size Estimates:} Quantitative repeated-measures data ($N=25$--$30$, $100$--$120$ observations) yielding preliminary effect sizes ($\text{partial } \eta^2$, Cohen's $d_z$, odds ratios) for behavioral fraud research.
+    \item \textbf{Mechanistic Account:} Evidence detailing how time pressure and payoff framing interact at the cognitive level, informing interface-level fraud countermeasures.
+\end{itemize}
+
+\section{Project Approach: Experimental Design}
+
+\subsection{Factorial Design and Stimulus Engineering}
+The study employs a \textbf{fully within-subjects (repeated-measures) $2 \times 2$ factorial design}:
+\begin{center}
+\vspace{-2pt}
+\textbf{2 (Information Framing: Gain vs.\ Loss) $\times$ 2 (Urgency Architecture: High vs.\ Low)}
+\vspace{-2pt}
+\end{center}
+Every participant completes all four experimental cells, maximizing statistical power under sample size constraints. Stimuli consist of four mobile chat interfaces patterned after authentic task-scam transcripts. To prevent carryover and demand effects across repeated exposures, each condition is embedded in a distinct but economically matched job domain (product review optimization, data verification, digital transcription, and app rating). Task economics (base wage of \$25--\$35/hr, required actions) remain strictly invariant across conditions:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Framing Manipulation:} Gain conditions emphasize earned bonuses (``Register now to claim your \$40 commission''); loss conditions emphasize avoiding forfeited balances (``Register now to avoid losing your \$40 credited reserve'').
+    \item \textbf{Urgency Manipulation:} High-urgency conditions display dynamic countdown timers ($<15$ minutes) and scarcity cues (``only 2 slots remaining''); low-urgency conditions offer open completion windows.
+\end{itemize}
+Presentation order is counterbalanced across participants via a balanced Latin square. Stimuli will be pre-tested on an independent pilot cohort ($N=6$--$8$) to ensure manipulation distinctiveness.
+
+\subsection{Dependent Measures and Instrumentation}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Primary Dependent Variable (Compliance Intent):} Continuous behavioral willingness to accept the task and register (visual analogue slider, 0--100), recorded immediately post-trial.
+    \item \textbf{Secondary Dependent Variables:} 7-point Likert ratings of perceived legitimacy and institutional trust, alongside a validated 4-item cognitive processing style scale (deliberative vs.\ intuitive processing).
+    \item \textbf{Behavioral Latency:} Millisecond-level stimulus dwell time and time-to-decision logged automatically as an objective behavioral metric of cognitive deliberation.
+    \item \textbf{Manipulation Checks:} Post-trial single items evaluating perceived urgency (1--7 scale) and forced-choice frame perception (gain vs.\ loss).
+    \item \textbf{Covariates:} Cognitive Reflection Test (CRT-3) score, age, and self-reported prior scam exposure.
+\end{itemize}
+
+\subsection{Experimental Procedure}
+\begin{enumerate}[leftmargin=*, label=\arabic*.]
+    \item \textbf{Informed Consent \& Onboarding:} Participants review digital consent under a neutral cover story (``Evaluating Novel Remote-Work Mobile Interfaces'').
+    \item \textbf{Trial Block:} Participants evaluate all four counterbalanced stimulus trials in succession. After each trial, participants complete the compliance slider, secondary ratings, and manipulation checks.
+    \item \textbf{Debriefing:} A structured funnel debriefing assesses suspicion and demand awareness, followed by an educational debriefing disclosing simulated scam tactics and cybersecurity guidance.
+\end{enumerate}
+
+\section{Project Approach: Methodology and Statistical Analysis Plan}
+
+\subsection{Sample Size and Statistical Power}
+The study will recruit \textbf{$N = 25$--$30$ university students and young adults}, an ecologically appropriate demographic frequently targeted by mobile messaging scams. Because the design is fully within-subjects, each participant contributes 4 observations, generating \textbf{$100$--$120$ total data points}. By removing between-subject variance from the error term, sensitivity power analysis indicates that $N = 25$ provides statistical power $(1 - \beta) \approx 0.80$ ($\alpha = .05$) to detect medium-to-large within-subject effects ($f \approx 0.30$--$0.35$).
+
+\subsection{Analytical Strategy}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Manipulation Check Validation:} Paired-samples $t$-tests (or Wilcoxon signed-rank tests) confirming distinct urgency and framing perceptions across conditions.
+    \item \textbf{Primary Hypothesis Testing (H1, H2, H3):} Two-way repeated-measures ANOVA (Framing $\times$ Urgency) on compliance intent with Greenhouse--Geisser sphericity corrections. If binary choices are modeled, a generalized linear mixed model (GLMM, logit link, subject random intercepts) will be estimated via Python (\texttt{statsmodels}/\texttt{pymer4}).
+    \item \textbf{Mechanistic Mediation (H4):} Multilevel within-subject mediation analysis testing whether decision latency or processing style scores mediate the Framing $\times$ Urgency interaction on compliance.
+    \item \textbf{Covariates \& Reporting:} CRT scores and scam history entered as between-subject covariates. All models will report exact $p$-values, effect sizes (partial $\eta^2$, Cohen's $d_z$, odds ratios), and 95\% confidence intervals.
+\end{itemize}
+
+\end{document}

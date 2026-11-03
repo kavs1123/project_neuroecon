@@ -1,0 +1,93 @@
+/* Study styles: phone-style chat mock-up, cue panel, rating forms.
+   Deliberately a generic chat look (no real messaging-app branding). */
+:root {
+  --bg: #f4f5f7;
+  --ink: #1d2330;
+  --muted: #5d6676;
+  --line: #d9dde4;
+  --chat-bg: #e9ecef;
+  --bubble: #ffffff;
+  --header: #2f4858;
+  --accent: #2f6fb3;
+  --urgent: #c0392b;
+  --urgent-bg: #fdecea;
+}
+body { background: var(--bg); color: var(--ink); font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif; }
+.jspsych-content { max-width: 960px; }
+.jspsych-display-element { font-size: 16px; }
+p.lead { font-size: 18px; }
+.text-page { max-width: 720px; margin: 0 auto; text-align: left; line-height: 1.55; }
+.text-page h2 { text-align: center; }
+.small { font-size: 13px; color: var(--muted); }
+
+/* ---------- offer screen ---------- */
+.offer-layout { display: flex; gap: 32px; justify-content: center; align-items: flex-start; text-align: left; }
+.phone {
+  width: 360px; height: min(680px, calc(100vh - 90px)); min-height: 440px; border-radius: 26px; border: 10px solid #20242c;
+  background: var(--chat-bg); display: flex; flex-direction: column; overflow: hidden;
+  box-shadow: 0 8px 28px rgba(0,0,0,.18);
+}
+.phone-header { background: var(--header); color: #fff; display: flex; align-items: center; gap: 10px; padding: 10px 12px; flex: none; }
+.avatar { width: 36px; height: 36px; border-radius: 50%; background: #8aa1b1; display: grid; place-items: center; font-weight: 600; font-size: 14px; }
+.phone-header .name { font-weight: 600; font-size: 15px; line-height: 1.2; }
+.phone-header .status { font-size: 12px; opacity: .8; }
+.timer-banner {
+  flex: none; background: var(--urgent-bg); color: var(--urgent); border-bottom: 1px solid #f3c1bb;
+  padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 14px;
+}
+.timer-banner .timer { font-variant-numeric: tabular-nums; font-size: 18px; letter-spacing: .5px; }
+.chat-body { flex: 1; overflow-y: auto; padding: 10px 10px 14px; display: flex; flex-direction: column; gap: 6px; }
+.day-chip { align-self: center; background: #d5dbe1; color: #44505e; font-size: 11px; padding: 2px 10px; border-radius: 10px; margin-bottom: 4px; }
+.bubble {
+  align-self: flex-start; max-width: 84%; background: var(--bubble); border-radius: 4px 14px 14px 14px;
+  padding: 6px 10px 15px; font-size: 14px; line-height: 1.36; position: relative; box-shadow: 0 1px 1px rgba(0,0,0,.08);
+}
+.bubble .ts { position: absolute; right: 8px; bottom: 3px; font-size: 10px; color: #8a94a3; }
+
+/* ---------- cue panel (click-to-reveal, one open at a time) ---------- */
+.cue-panel { width: 300px; padding-top: 6px; }
+.cue-panel h3 { margin: 0 0 4px; font-size: 17px; }
+.cue-panel h3 span { font-weight: 400; color: var(--muted); font-size: 14px; }
+.cue-hint { margin: 0 0 12px; font-size: 13px; color: var(--muted); }
+.cue { border: 1px solid var(--line); border-radius: 10px; background: #fff; margin-bottom: 10px; overflow: hidden; }
+.cue-head {
+  width: 100%; border: 0; background: #fff; padding: 12px 14px; font: inherit; font-weight: 600; font-size: 15px;
+  display: flex; justify-content: space-between; align-items: center; cursor: pointer; color: var(--ink);
+}
+.cue-head:hover { background: #f7f9fb; }
+.cue-head .chev { color: var(--accent); font-size: 18px; line-height: 1; }
+.cue-body { display: none; padding: 0 14px 12px; font-size: 14px; line-height: 1.45; color: #333b48; }
+.cue.open .cue-body { display: block; }
+.cue.open .cue-head { background: #eef4fb; }
+
+/* ---------- decision buttons (moved into the cue panel on load) ---------- */
+.decision-label { margin: 22px 0 8px; font-weight: 600; font-size: 15px; }
+#jspsych-html-button-response-btngroup { margin-top: 18px; display: flex; gap: 14px; justify-content: center; }
+.cue-panel #jspsych-html-button-response-btngroup { margin-top: 0; justify-content: space-between; }
+.decision-btn { min-width: 140px; font-size: 16px !important; padding: 10px 14px !important; margin: 0 !important; }
+.jspsych-content-wrapper { margin-top: 8px; }
+
+/* ---------- rating form ---------- */
+.rate-form { max-width: 760px; margin: 0 auto; text-align: left; }
+.rate-form .about { text-align: center; color: var(--muted); margin-bottom: 14px; }
+.q { margin: 0 0 18px; }
+.q .qt { font-weight: 600; margin-bottom: 6px; }
+.slider-wrap input[type=range] { width: 100%; }
+.slider-wrap input[type=range].untouched::-webkit-slider-thumb { opacity: 0; }
+.slider-wrap input[type=range].untouched::-moz-range-thumb { opacity: 0; }
+.slider-ends { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); }
+.likert { display: flex; justify-content: space-between; gap: 4px; }
+.likert label { flex: 1; text-align: center; font-size: 13px; cursor: pointer; }
+.likert input { display: block; margin: 0 auto 2px; }
+.likert-ends { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
+.choice-row { display: flex; gap: 28px; }
+.choice-row label { cursor: pointer; }
+.form-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+.form-grid input[type=text], .form-grid input[type=number], .form-grid select, .form-grid textarea {
+  font: inherit; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; width: 100%; box-sizing: border-box;
+}
+textarea { min-height: 64px; }
+
+/* ---------- debrief ---------- */
+.scam-list { columns: 2; font-size: 14px; }
+.flag-list li { margin-bottom: 6px; }

@@ -1,0 +1,716 @@
+{
+  "_readme": "Stimulus battery v0.2 (DRAFT for team realism review). Each scenario is framing/urgency-neutral; the renderer inserts {FRAME} and {URGENCY} slot text from 'frames' and 'urgency' below, giving 4 variants per scenario. All company names, people, phone numbers and handles are fictional. Phone numbers use the UK Ofcom fiction range (+44 7700 900xxx). Cell assignment is NOT stored here: lists.js assigns scenario i (within type) to cell (i + list) % 4, cells = [gain_high, gain_low, loss_high, loss_low]. v0.2: header shows display name only (number/business status moved into the 'Sender profile' cue); solicitation style, sender naming and emoji use mixed across scam/legit so they are not trivial giveaways; emojis removed from frame lines (the warning emoji confounded loss-frame with urgency).",
+  "constants": {
+    "amount": "₹2,000",
+    "scam_fee": "₹500",
+    "countdown_seconds": 899,
+    "slots_left": 2,
+    "decision_buttons": [
+      "Accept offer",
+      "Ignore"
+    ]
+  },
+  "frames": {
+    "scam": {
+      "gain": "Complete your registration now to claim your {amount} joining commission.",
+      "loss": "Complete your registration now to avoid losing the {amount} joining commission already reserved in your name."
+    },
+    "legit": {
+      "gain": "Confirm your interview slot to secure the {amount} joining bonus offered for this role.",
+      "loss": "Confirm your interview slot so you don't lose the {amount} joining bonus reserved for your profile."
+    }
+  },
+  "urgency": {
+    "scam": {
+      "high": {
+        "text": "⏳ Only {slots} slots left in today's batch — this offer expires when the timer ends.",
+        "timer": true,
+        "timer_label": "Offer expires in"
+      },
+      "low": {
+        "text": "No rush — registration stays open all week, reply whenever it's convenient for you.",
+        "timer": false
+      }
+    },
+    "legit": {
+      "high": {
+        "text": "⏳ Only {slots} interview slots left for this round — the slot booking closes when the timer ends.",
+        "timer": true,
+        "timer_label": "Slot booking closes in"
+      },
+      "low": {
+        "text": "No rush — applications stay open until the end of the month, reply whenever it's convenient.",
+        "timer": false
+      }
+    }
+  },
+  "cue_labels": {
+    "sender": "Sender profile",
+    "company": "Company check",
+    "payment": "Payment terms"
+  },
+  "practice": [
+    {
+      "id": "P1",
+      "type": "legit",
+      "domain": "Library assistant (campus)",
+      "sender": "Campus Library Office",
+      "sender_sub": "Verified account",
+      "messages": [
+        "Hello! This is the campus library office. You signed up for student assistant roles last month.",
+        "We have a part-time desk assistant opening: 6 hrs/week, ₹250/hr, shelving and helping visitors.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "Official institute account · listed on the institute website.",
+        "company": "Institute library · on-campus department.",
+        "payment": "Paid monthly via the institute student-payroll system. No fees."
+      }
+    },
+    {
+      "id": "P2",
+      "type": "scam",
+      "domain": "Survey filling",
+      "sender": "Neha | QuickPoll Rewards",
+      "sender_sub": "+44 7700 900118",
+      "messages": [
+        "Hi dear 😊 I'm Neha from QuickPoll Rewards. Your number was shortlisted from an online job portal.",
+        "Fill short surveys from your phone, 5 min each, and earn ₹700–1,000 daily. No experience needed!",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "+44 7700 900118 · Unsaved international number · account created 4 days ago · not a verified business.",
+        "company": "No registered company found under 'QuickPoll Rewards'. Website domain registered 11 days ago.",
+        "payment": "Activation requires a ₹500 'refundable' deposit via UPI to a personal ID before your first payout."
+      }
+    }
+  ],
+  "attention_check": {
+    "id": "ATT",
+    "type": "check",
+    "domain": "Attention check",
+    "sender": "Study team",
+    "sender_sub": "Research study",
+    "messages": [
+      "This message is part of the study, not a job offer.",
+      "To show that you are reading carefully, please click IGNORE on this screen, and on the next screen set the first slider to 0."
+    ],
+    "cues": {
+      "sender": "This is an attention check.",
+      "company": "This is an attention check.",
+      "payment": "This is an attention check."
+    }
+  },
+  "scenarios": [
+    {
+      "id": "S01",
+      "type": "scam",
+      "domain": "Hotel rating",
+      "sender": "Riya | Kestrel Review Hub",
+      "sender_sub": "+44 7700 900461",
+      "messages": [
+        "Hi! I'm Riya from Kestrel Review Hub 😊 We found your profile on a job portal.",
+        "We're hiring part-time remote reviewers: rate hotels online from home, 10–15 min per task, earn ₹800–1,200 daily.",
+        "Payouts go straight to your bank account after each set of 3 tasks.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "+44 7700 900461 · Unsaved international number · account created 6 days ago · not a verified business.",
+        "company": "No registered company found under 'Kestrel Review Hub'. Website domain registered 9 days ago.",
+        "payment": "Before the first payout you must 'activate' your account with a ₹500 refundable deposit via UPI to a personal ID."
+      }
+    },
+    {
+      "id": "S02",
+      "type": "scam",
+      "domain": "Product review",
+      "sender": "Aman | ShopPulse Partners",
+      "sender_sub": "+44 7700 900237",
+      "messages": [
+        "Hello! Aman here from ShopPulse Partners. Are you looking for flexible work from home? 🙂",
+        "Write 2-line reviews for online products. Each review pays ₹150, most members earn ₹1,000+ daily.",
+        "Our team will guide you through your first tasks on Telegram.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "+44 7700 900237 · Unsaved international number · profile photo is a stock image · not a verified business.",
+        "company": "No company registration found. 'ShopPulse Partners' has no website, only a chat group.",
+        "payment": "Commission is released only after a ₹500 'merchant security deposit' paid to a personal UPI handle."
+      }
+    },
+    {
+      "id": "S03",
+      "type": "scam",
+      "domain": "App rating",
+      "sender": "Sneha | AppBoost Team",
+      "sender_sub": "+44 7700 900582",
+      "messages": [
+        "Hi, Sneha from AppBoost Team 👋 We're recruiting part-time app testers.",
+        "Download apps, give a 5-star rating and screenshot it. ₹100 per rating, takes 2 minutes.",
+        "Top members earn ₹25,000+ per month from their phone.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "+44 7700 900582 · Unsaved international number · account created 2 days ago · not a verified business.",
+        "company": "No registered entity named 'AppBoost Team'. No website or office address found.",
+        "payment": "To withdraw earnings you must first pay a ₹500 'tax clearance fee' to a personal UPI ID."
+      }
+    },
+    {
+      "id": "S04",
+      "type": "scam",
+      "domain": "Video engagement",
+      "sender": "Karan | ViewWorks Media",
+      "sender_sub": "+44 7700 900309",
+      "messages": [
+        "Hey! Karan from ViewWorks Media here. We pay people to like and subscribe to videos 😊",
+        "Each like pays ₹50. Simple task, 10–20 minutes a day, earn ₹600–900 daily.",
+        "You'll be added to our members group once you register.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "+44 7700 900309 · Unsaved international number · same profile photo found on 3 other accounts.",
+        "company": "'ViewWorks Media' is not a registered company. Website domain registered 14 days ago.",
+        "payment": "Upgrading to a 'VIP task level' to receive payouts requires a ₹500 deposit via UPI to a personal ID."
+      }
+    },
+    {
+      "id": "S05",
+      "type": "scam",
+      "domain": "Data verification",
+      "sender": "DataSure Global HR",
+      "sender_sub": "+44 7700 900744",
+      "messages": [
+        "Good afternoon! This is Pooja from DataSure Global HR, following up on the application you submitted on an online job portal.",
+        "We need remote data verifiers: check names and addresses in a spreadsheet. ₹900/hr, flexible hours.",
+        "No interview needed — you can start today.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "+44 7700 900744 · Unsaved international number · account created 8 days ago · not a verified business.",
+        "company": "No company registration found for 'DataSure Global'. Contact email is a free webmail address.",
+        "payment": "You must buy a ₹500 'software licence' via UPI to a personal ID before receiving the work files."
+      }
+    },
+    {
+      "id": "S06",
+      "type": "scam",
+      "domain": "Digital transcription",
+      "sender": "Meera | ScribeNow Online",
+      "sender_sub": "+44 7700 900653",
+      "messages": [
+        "Hi, Meera from ScribeNow Online 🙂 Are you comfortable typing in English?",
+        "Transcribe short audio clips (1–2 min). Pay is ₹250 per clip, around ₹1,200 a day for 1–2 hours.",
+        "Work fully from your phone or laptop.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "+44 7700 900653 · Unsaved international number · not a verified business · no previous messages.",
+        "company": "'ScribeNow Online' has no company registration and no reviews anywhere online.",
+        "payment": "A ₹500 'refundable training fee' must be paid via UPI to a personal ID before your first task."
+      }
+    },
+    {
+      "id": "S07",
+      "type": "scam",
+      "domain": "E-commerce order boosting",
+      "sender": "Vikram | CartRise Merchant Services",
+      "sender_sub": "+44 7700 900815",
+      "messages": [
+        "Hello! Vikram from CartRise Merchant Services. We help online sellers boost their rankings 🚀",
+        "You 'place' practice orders to boost seller ratings and earn 10% commission on each order.",
+        "Members earn ₹1,000–3,000 daily in their spare time.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "+44 7700 900815 · Unsaved international number · account created 5 days ago · not a verified business.",
+        "company": "No registered company named 'CartRise Merchant Services'. No website.",
+        "payment": "You must top up ₹500 of your own money via UPI to a personal ID to unlock 'order tasks'."
+      }
+    },
+    {
+      "id": "S08",
+      "type": "scam",
+      "domain": "Map location rating",
+      "sender": "Divya | LocalStar Reviews",
+      "sender_sub": "+44 7700 900176",
+      "messages": [
+        "Hi there! Divya from LocalStar Reviews 😊 Quick part-time opportunity for you.",
+        "Rate local businesses on online maps — ₹150 per rating, 30 seconds each.",
+        "Earn ₹800–1,500 daily, paid every evening.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "+44 7700 900176 · Unsaved international number · profile name changed twice this week.",
+        "company": "'LocalStar Reviews' has no registration, no office address and no website.",
+        "payment": "Before payout you must deposit ₹500 via UPI to a personal ID to 'verify your bank account'."
+      }
+    },
+    {
+      "id": "S09",
+      "type": "scam",
+      "domain": "Movie ticket rating",
+      "sender": "Rahul | ReelRank Studio",
+      "sender_sub": "+44 7700 900528",
+      "messages": [
+        "Hey, Rahul from ReelRank Studio here. You applied for part-time work on a job portal, so we're reaching out.",
+        "Rate movies on ticketing sites to improve their visibility. ₹200 per rating.",
+        "Easily earn ₹1,000+ per day from home.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "+44 7700 900528 · Unsaved international number · not a verified business · account created 3 days ago.",
+        "company": "No production or marketing company registered as 'ReelRank Studio'.",
+        "payment": "Payouts are 'locked' until you pay a ₹500 refundable deposit via UPI to a personal ID."
+      }
+    },
+    {
+      "id": "S10",
+      "type": "scam",
+      "domain": "Social media following",
+      "sender": "Tanya | GrowthLoop Digital",
+      "sender_sub": "+44 7700 900392",
+      "messages": [
+        "Hi! Tanya from GrowthLoop Digital 😊 We work with brands on social media.",
+        "Follow brand pages and send us a screenshot. ₹70 per follow, 30+ tasks daily.",
+        "Our members earn ₹15,000–30,000 a month part-time.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "+44 7700 900392 · Unsaved international number · account created 7 days ago · not a verified business.",
+        "company": "'GrowthLoop Digital' is not a registered company. Domain registered 10 days ago.",
+        "payment": "Withdrawal requires a one-time ₹500 'activation charge' via UPI to a personal ID."
+      }
+    },
+    {
+      "id": "S11",
+      "type": "scam",
+      "domain": "Ad click verification",
+      "sender": "ClickVerify Network",
+      "sender_sub": "+44 7700 900647",
+      "messages": [
+        "Hello. Arjun from ClickVerify Network. Looking for part-time remote work?",
+        "Watch and verify online ads for advertisers. ₹40 per ad, about 25 ads per day.",
+        "Payment is credited daily to your wallet.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "+44 7700 900647 · Unsaved international number · profile created this week · not a verified business.",
+        "company": "No registration found for 'ClickVerify Network'. Website hosted abroad, created 12 days ago.",
+        "payment": "Wallet withdrawals are enabled only after a ₹500 deposit via UPI to a personal ID."
+      }
+    },
+    {
+      "id": "S12",
+      "type": "scam",
+      "domain": "Playlist rating",
+      "sender": "Isha | TuneMetric",
+      "sender_sub": "+44 7700 900259",
+      "messages": [
+        "Hi! Isha from TuneMetric 🎵 We hire music listeners to rate songs for labels.",
+        "Listen to 30-second clips and rate them. ₹60 per song, around ₹900 per day.",
+        "Fully remote, work any time.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "+44 7700 900259 · Unsaved international number · not a verified business · account created 9 days ago.",
+        "company": "'TuneMetric' has no company registration and no label partnerships listed anywhere.",
+        "payment": "To start earning you must pay a ₹500 'membership fee' via UPI to a personal ID."
+      }
+    },
+    {
+      "id": "S13",
+      "type": "scam",
+      "domain": "Restaurant review",
+      "sender": "Nikhil | FoodieScore",
+      "sender_sub": "+44 7700 900934",
+      "messages": [
+        "Hello, Nikhil from FoodieScore. Thanks for your interest in part-time work on our website.",
+        "Post short reviews for partner restaurants online. ₹120 per review, 10 reviews a day.",
+        "No experience needed, training provided on chat.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "+44 7700 900934 · Unsaved international number · profile photo found on a stock-image site.",
+        "company": "No registered company named 'FoodieScore'. No office address.",
+        "payment": "First payout requires a ₹500 'verification deposit' via UPI to a personal ID."
+      }
+    },
+    {
+      "id": "S14",
+      "type": "scam",
+      "domain": "Captcha typing",
+      "sender": "Anjali | TypeEarn Solutions",
+      "sender_sub": "+44 7700 900471",
+      "messages": [
+        "Hi! Anjali from TypeEarn Solutions 👋 Simple typing work available.",
+        "Type captcha codes from images. ₹1 per captcha, most members do 1,000+ a day.",
+        "Work from home on your phone or laptop.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "+44 7700 900471 · Unsaved international number · account created 1 day ago · not a verified business.",
+        "company": "'TypeEarn Solutions' is not registered. Website copied from another site.",
+        "payment": "You must buy a ₹500 'work ID' via UPI to a personal ID before your first task."
+      }
+    },
+    {
+      "id": "S15",
+      "type": "scam",
+      "domain": "Product photo tagging",
+      "sender": "TagPixel AI Recruitment",
+      "sender_sub": "+44 7700 900865",
+      "messages": [
+        "Hello, Rohan from TagPixel AI. We're building AI datasets and need remote taggers.",
+        "Tag products in photos (shoes, bags, etc.). ₹10 per image, ₹1,000+ daily.",
+        "Start immediately, no interview.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "+44 7700 900865 · Unsaved international number · not a verified business · no previous messages.",
+        "company": "No company registration for 'TagPixel AI'. Domain registered 6 days ago.",
+        "payment": "Account 'unlock' requires a ₹500 deposit via UPI to a personal ID before tasks are paid."
+      }
+    },
+    {
+      "id": "S16",
+      "type": "scam",
+      "domain": "Online survey panel",
+      "sender": "Kavya | OpinionVault",
+      "sender_sub": "+44 7700 900713",
+      "messages": [
+        "Hi! Kavya from OpinionVault. We received your application for our paid survey panel.",
+        "Answer brand surveys for ₹300 each, 3–5 surveys a day.",
+        "Earn ₹20,000+ per month part-time.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "+44 7700 900713 · Unsaved international number · account created 4 days ago · not a verified business.",
+        "company": "'OpinionVault' has no company registration in India and no website.",
+        "payment": "To receive your first payment you must pay a ₹500 'panel registration fee' via UPI to a personal ID."
+      }
+    },
+    {
+      "id": "L01",
+      "type": "legit",
+      "domain": "Content writing internship",
+      "sender": "Priya Nair | Brightlane Media",
+      "sender_sub": "Business account",
+      "messages": [
+        "Hello! Priya here from the talent team at Brightlane Media. Thanks for applying to our content writing internship.",
+        "The role is remote, 3 months, ₹12,000/month stipend, writing 2–3 blog articles a week.",
+        "Next step is a 20-minute video interview with our editor.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "Verified business account · on the platform since 2019.",
+        "company": "Registered private limited company · ~120 employees · employee review rating 3.9/5 (210 reviews).",
+        "payment": "Stipend paid monthly by bank transfer through company payroll. No fees at any stage."
+      }
+    },
+    {
+      "id": "L02",
+      "type": "legit",
+      "domain": "Remote customer support",
+      "sender": "Ashvin Retail HR",
+      "sender_sub": "Business account",
+      "messages": [
+        "Hi, this is HR at Ashvin Retail. We received your application for remote customer support.",
+        "Part-time, 20 hrs/week, ₹18,000/month, handling customer chats on our website.",
+        "We'll schedule a short phone screening followed by a written test.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "Verified business account · contact matches the company careers page.",
+        "company": "Registered company since 2014 · 400+ employees · employee review rating 3.7/5 (530 reviews).",
+        "payment": "Salary paid monthly by bank transfer with payslips. No fees at any stage."
+      }
+    },
+    {
+      "id": "L03",
+      "type": "legit",
+      "domain": "Data annotation",
+      "sender": "Farhan | Lattice Labs",
+      "sender_sub": "Business account",
+      "messages": [
+        "Hello, Farhan from Lattice Labs! You applied for our data annotation associate role.",
+        "Remote, contract for 6 months, ₹300/hr, 15–25 hrs/week labelling images for ML models.",
+        "Next step: a short paid qualification test, then onboarding with a formal contract.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "Verified business account · domain email used for all communication.",
+        "company": "Registered AI services company · ~80 employees · employee review rating 4.0/5 (95 reviews).",
+        "payment": "Paid fortnightly by bank transfer under a signed contract. No fees at any stage."
+      }
+    },
+    {
+      "id": "L04",
+      "type": "legit",
+      "domain": "Online tutoring",
+      "sender": "Gyanpath Tutors",
+      "sender_sub": "Business account",
+      "messages": [
+        "Hi! 😊 Gyanpath Tutors here. Thanks for registering as a maths tutor on our website.",
+        "We have openings for class 9–10 maths, online, ₹400/hr, 6–10 hrs/week.",
+        "Next step: a 15-minute demo class with our academic coordinator.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "Verified business account · on the platform since 2020.",
+        "company": "Registered education company · 60 employees, 1,500+ tutors · rating 4.1/5 (300 reviews).",
+        "payment": "Paid monthly per hour taught, by bank transfer. No registration or training fees."
+      }
+    },
+    {
+      "id": "L05",
+      "type": "legit",
+      "domain": "Social media internship",
+      "sender": "Harbor & Pine Careers",
+      "sender_sub": "Business account",
+      "messages": [
+        "Hello! This is Harbor & Pine, a lifestyle brand. We came across your profile and think you'd fit our social media internship 🙂",
+        "Hybrid, 3 months, ₹10,000/month stipend, planning posts and tracking engagement.",
+        "Next step is a short assignment and a call with our marketing lead.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "Verified business account · linked to the company website.",
+        "company": "Registered company since 2017 · 45 employees · employee review rating 3.8/5 (60 reviews).",
+        "payment": "Stipend paid monthly by bank transfer with an internship letter. No fees."
+      }
+    },
+    {
+      "id": "L06",
+      "type": "legit",
+      "domain": "Freelance transcription",
+      "sender": "Verbatim Works Talent",
+      "sender_sub": "Business account",
+      "messages": [
+        "Hi, Verbatim Works here. Thanks for your interest in freelance transcription.",
+        "Projects are ₹120 per audio minute, typically 3–5 hrs of audio a week, fully remote.",
+        "Next step: a free 5-minute transcription test, then a freelancer agreement.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "Verified business account · on the platform since 2018.",
+        "company": "Registered transcription company · 30 staff, 600 freelancers · rating 3.9/5 (140 reviews).",
+        "payment": "Paid monthly by bank transfer per invoice. No fees or deposits at any stage."
+      }
+    },
+    {
+      "id": "L07",
+      "type": "legit",
+      "domain": "Research assistant",
+      "sender": "Sunita Rao | Meridian Insights",
+      "sender_sub": "Business account",
+      "messages": [
+        "Hello! Sunita from Meridian Insights, a market research firm. You applied for a part-time research assistant role.",
+        "Remote, 15 hrs/week, ₹15,000/month, helping run surveys and clean data.",
+        "Next step: a 30-minute interview with the project manager.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "Verified business account · contact matches the company's professional networking page.",
+        "company": "Registered market research firm since 2012 · 200 employees · rating 3.8/5 (180 reviews).",
+        "payment": "Salary paid monthly by bank transfer with payslips. No fees at any stage."
+      }
+    },
+    {
+      "id": "L08",
+      "type": "legit",
+      "domain": "App QA testing",
+      "sender": "Quillstack Software Careers",
+      "sender_sub": "Business account",
+      "messages": [
+        "Hi! Quillstack Software here. Thanks for applying for our junior QA tester role.",
+        "Remote contract, 4 months, ₹20,000/month, testing our mobile app and logging bugs.",
+        "Next step: a short technical interview and a take-home test.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "Verified business account · official domain email.",
+        "company": "Registered software company · 150 employees · employee review rating 4.0/5 (240 reviews).",
+        "payment": "Paid monthly by bank transfer under a written contract. No fees."
+      }
+    },
+    {
+      "id": "L09",
+      "type": "legit",
+      "domain": "Marketing internship",
+      "sender": "Saffron Leaf Foods HR",
+      "sender_sub": "Business account",
+      "messages": [
+        "Hello from Saffron Leaf Foods! You applied for our marketing internship.",
+        "In-office/hybrid, 2 months, ₹8,000/month stipend, supporting product launches.",
+        "Next step: a group discussion and a short interview.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "Verified business account · on the platform since 2016.",
+        "company": "Registered FMCG company · 900 employees · employee review rating 3.6/5 (700 reviews).",
+        "payment": "Stipend paid monthly by bank transfer. No fees at any stage."
+      }
+    },
+    {
+      "id": "L10",
+      "type": "legit",
+      "domain": "Translation",
+      "sender": "Joseph | Polyglot Bridge",
+      "sender_sub": "Business account",
+      "messages": [
+        "Hi, Joseph from Polyglot Bridge. You signed up as a Hindi–English translator on our site.",
+        "We have document projects at ₹1.2 per word, about 4,000 words a week, remote.",
+        "Next step: a free 300-word sample translation and a freelancer agreement.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "Verified business account · contact matches the company website.",
+        "company": "Registered language services company · 25 staff · rating 4.2/5 (85 reviews).",
+        "payment": "Paid by bank transfer within 30 days of invoice. No fees or deposits."
+      }
+    },
+    {
+      "id": "L11",
+      "type": "legit",
+      "domain": "Graphic design freelance",
+      "sender": "Inkwell Studio",
+      "sender_sub": "Business account",
+      "messages": [
+        "Hello! Inkwell Studio here, a small design agency. We liked your portfolio.",
+        "We need a freelance designer for social media creatives: ₹600 per design, ~10 designs a month.",
+        "Next step: a short call to discuss a trial brief (paid).",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "Verified business account · on the platform since 2021.",
+        "company": "Registered design agency · 18 employees · client review rating 4.3/5 (40 reviews).",
+        "payment": "Paid per design by bank transfer after approval. No fees at any stage."
+      }
+    },
+    {
+      "id": "L12",
+      "type": "legit",
+      "domain": "Campus ambassador",
+      "sender": "Northstar EdTech Careers",
+      "sender_sub": "Business account",
+      "messages": [
+        "Hi! 👋 Northstar EdTech here. You applied for our campus ambassador program.",
+        "Part-time, 3 months, ₹5,000/month plus performance incentives, running events on campus.",
+        "Next step: a 15-minute video call with our community lead.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "Verified business account · official domain email.",
+        "company": "Registered edtech company · 300 employees · employee review rating 3.7/5 (260 reviews).",
+        "payment": "Paid monthly by bank transfer with an offer letter. No fees."
+      }
+    },
+    {
+      "id": "L13",
+      "type": "legit",
+      "domain": "Bookkeeping assistant",
+      "sender": "Ankit Mehra | Ledgerline Associates",
+      "sender_sub": "Business account",
+      "messages": [
+        "Hello, Ankit from Ledgerline Associates (chartered accountants). A former colleague of yours recommended you to us.",
+        "Part-time bookkeeping assistant, remote, 15 hrs/week, ₹14,000/month.",
+        "Next step: a short Excel test and an interview with a partner.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "Verified business account · on the platform since 2015.",
+        "company": "Registered CA firm · 35 employees · client review rating 4.1/5 (55 reviews).",
+        "payment": "Salary paid monthly by bank transfer with payslips. No fees at any stage."
+      }
+    },
+    {
+      "id": "L14",
+      "type": "legit",
+      "domain": "Event coordination",
+      "sender": "Marigold Events HR",
+      "sender_sub": "Business account",
+      "messages": [
+        "Hi! Marigold Events here 🎉 You applied to join our weekend event crew.",
+        "Weekend shifts, ₹1,500 per day, helping coordinate weddings and corporate events in the city.",
+        "Next step: a short in-person orientation at our office.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "Verified business account · contact matches the company website.",
+        "company": "Registered events company since 2013 · 70 employees · rating 3.9/5 (120 reviews).",
+        "payment": "Paid weekly by bank transfer. No fees or deposits at any stage."
+      }
+    },
+    {
+      "id": "L15",
+      "type": "legit",
+      "domain": "Video editing freelance",
+      "sender": "Framecraft Productions",
+      "sender_sub": "Business account",
+      "messages": [
+        "Hello! Framecraft Productions here. We saw your editing samples.",
+        "Freelance short-video editing: ₹800 per edited reel, 8–12 reels a month, remote.",
+        "Next step: a paid test edit and a freelancer agreement.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "Verified business account · on the platform since 2020.",
+        "company": "Registered production house · 22 employees · client review rating 4.2/5 (65 reviews).",
+        "payment": "Paid per reel by bank transfer within 15 days. No fees at any stage."
+      }
+    },
+    {
+      "id": "L16",
+      "type": "legit",
+      "domain": "Sales development internship",
+      "sender": "Deepa | Cobalt CRM",
+      "sender_sub": "Business account",
+      "messages": [
+        "Hi! Deepa from Cobalt CRM. Thanks for applying to our sales development internship.",
+        "Remote, 3 months, ₹15,000/month stipend, researching leads and booking demos.",
+        "Next step: a 30-minute interview with our sales manager.",
+        "{FRAME}",
+        "{URGENCY}"
+      ],
+      "cues": {
+        "sender": "Verified business account · official domain email.",
+        "company": "Registered SaaS company · 250 employees · employee review rating 4.0/5 (190 reviews).",
+        "payment": "Stipend paid monthly by bank transfer with an internship letter. No fees."
+      }
+    }
+  ]
+}

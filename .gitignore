@@ -1,0 +1,20 @@
+# participant data never goes into the public repo
+data/raw/
+data/processed/
+data/simulated/
+results/
+results_sim/
+
+# python
+.venv/
+__pycache__/
+*.pyc
+
+# latex build files
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.toc
+data/pilot_processed/
+results_pilot/
