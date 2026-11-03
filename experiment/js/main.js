@@ -1,7 +1,10 @@
 // Main timeline. URL params:
 //   ?list=0..3   force a counterbalancing list (otherwise DataPipe condition assignment, else random)
+//   ?preview=ID  show one offer only (never saves)
 //   ?pilot=1     tag data as pilot (filename prefix "pilot_")
 //   ?debug=1     skip DataPipe, offer local CSV download at the end
+// Saving: @jspsych/extension-pipe uploads the whole dataset once, when the experiment ends
+// (stream:false, so nothing is stored for people who drop out, matching the consent text).
 //   ?autopilot=1 click through automatically (testing only; implies debug)
 //   ?pid=XYZ     use a given participant id instead of a random one
 (async function () {
@@ -11,24 +14,63 @@
   const PILOT = params.get("pilot") === "1";
   const ACCEPT = "Accept offer";
   const IGNORE = "Ignore";
+  const usePipe = Boolean(CONFIG.DATAPIPE_EXPERIMENT_ID) && !DEBUG && !params.has("preview");
 
-  const jsPsych = initJsPsych({
+  // ---------- participant id + what gets saved ----------
+  const ALPHABET = "abcdefghjkmnpqrstuvwxyz23456789";
+  const randomId = (n) => Array.from(crypto.getRandomValues(new Uint8Array(n)), (b) => ALPHABET[b % ALPHABET.length]).join("");
+  const pid = params.get("pid") || randomId(10);
+  let status = "in_progress"; // -> "declined" | "withdrawn" | "complete"
+  let jsPsych = null;
+  const filename = () => `${PILOT ? "pilot_" : ""}${pid}.csv`;
+  const dataString = () => {
+    if (status === "declined") return `participant_id,declined,study_version\n${pid},1,${CONFIG.STUDY_VERSION}\n`;
+    if (status === "withdrawn") return `participant_id,withdrawn,study_version\n${pid},1,${CONFIG.STUDY_VERSION}\n`;
+    return jsPsych.data.get().csv();
+  };
+  const download = () => {
+    const blob = new Blob([dataString()], { type: "text/csv" });
+    Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: filename() }).click();
+  };
+
+  const extensions = [{ type: jsPsychExtensionMouseTracking, params: { minimum_sample_time: 50 } }];
+  if (usePipe) {
+    extensions.push({
+      type: jsPsychExtensionPipe,
+      params: {
+        experiment_id: CONFIG.DATAPIPE_EXPERIMENT_ID,
+        filename,
+        data_string: dataString,
+        stream: false,
+        wait_message: "<div class='text-page'><h2>Saving…</h2><p class='lead'>Saving your responses. Please do not close this page.</p></div>",
+        done_message: "<div class='text-page'><h2>Thank you!</h2><p class='lead'>All done. You can now close this tab.</p></div>",
+        on_save: (result) => {
+          if (result.ok) return;
+          document.body.innerHTML = `<div class="text-page" style="margin-top:60px"><h2>Thank you!</h2>
+            <p class="lead">We could not save your responses automatically. Please download your data file and send it to the study team.</p>
+            <p><button class="jspsych-btn" id="dl-btn">Download data file</button></p></div>`;
+          document.getElementById("dl-btn").addEventListener("click", download);
+        },
+      },
+    });
+  }
+
+  jsPsych = initJsPsych({
     show_progress_bar: true,
     auto_update_progress_bar: false,
     message_progress_bar: "Progress",
-    extensions: [{ type: jsPsychExtensionMouseTracking, params: { minimum_sample_time: 50 } }],
+    extensions,
   });
 
   const stim = await (await fetch(CONFIG.STIMULI_URL, { cache: "no-store" })).json();
   if (DEBUG) Lists.check(stim);
 
   // ---------- participant & list ----------
-  const pid = params.get("pid") || jsPsych.randomization.randomID(10);
   let list = params.has("list") ? Number(params.get("list")) : null;
   let listSource = "url";
-  if (list === null && CONFIG.DATAPIPE_EXPERIMENT_ID && !DEBUG) {
+  if (list === null && usePipe) {
     try {
-      const c = await jsPsychPipe.getCondition(CONFIG.DATAPIPE_EXPERIMENT_ID);
+      const c = await jsPsychExtensionPipe.getCondition(CONFIG.DATAPIPE_EXPERIMENT_ID);
       if (Number.isInteger(c)) { list = c % Lists.N_LISTS; listSource = "datapipe"; }
     } catch (e) { console.warn("DataPipe condition assignment failed", e); }
   }
@@ -158,7 +200,10 @@
     choices: ["I agree", "I do not agree"],
     data: { task: "consent" },
     on_finish: (d) => {
-      if (d.response !== 0) jsPsych.abortExperiment("<p>You chose not to take part. Thank you for your time. You can close this tab.</p>");
+      if (d.response !== 0) {
+        status = "declined";
+        jsPsych.abortExperiment("<p>You chose not to take part. Thank you for your time. You can close this tab.</p>");
+      }
     },
   }, () => Auto.click("#jspsych-html-button-response-btngroup button")));
 
@@ -213,55 +258,34 @@
   timeline.push(form(Pages.scamExposure(), "scam_exposure"));
   timeline.push(form(Pages.funnel(), "funnel_debrief"));
 
-  let keepData = true;
   timeline.push(ap({
     type: jsPsychHtmlButtonResponse,
     stimulus: Pages.educationalDebrief(stim),
     choices: ["Keep my responses in the study", "Withdraw my responses"],
     data: { task: "reconsent" },
-    on_finish: (d) => { keepData = d.response === 0; d.keep_data = keepData ? 1 : 0; },
+    on_finish: (d) => { status = d.response === 0 ? "complete" : "withdrawn"; d.keep_data = status === "complete" ? 1 : 0; },
   }, () => Auto.click("#jspsych-html-button-response-btngroup button")));
 
-  const filename = () => `${PILOT ? "pilot_" : ""}${pid}.csv`;
-  const dataString = () => (keepData
-    ? jsPsych.data.get().csv()
-    : `participant_id,withdrawn,study_version\n${pid},1,${CONFIG.STUDY_VERSION}\n`);
-  const usePipe = Boolean(CONFIG.DATAPIPE_EXPERIMENT_ID) && !DEBUG;
-
-  if (usePipe) {
+  // Test mode only: final screen with a download button (+ CSV dump for the autopilot test).
+  // With DataPipe on, the reconsent screen is the last trial and the extension shows its done message.
+  if (!usePipe) {
     timeline.push({
-      type: jsPsychPipe, action: "save", experiment_id: CONFIG.DATAPIPE_EXPERIMENT_ID,
-      filename, data_string: dataString,
+      type: jsPsychHtmlButtonResponse,
+      choices: [],
+      stimulus: `<div class="text-page"><h2>Thank you!</h2>
+        <p class='lead'>Saving to the server is turned off (test mode). Click below to download the data file.</p>
+        <p><button class="jspsych-btn" id="dl-btn">Download data file</button></p>
+        <pre id="autopilot-output" style="display:none"></pre></div>`,
+      on_load: () => {
+        document.getElementById("dl-btn").addEventListener("click", download);
+        if (AUTOPILOT) {
+          const pre = document.getElementById("autopilot-output");
+          pre.textContent = dataString();
+          pre.dataset.done = "1";
+        }
+      },
     });
   }
-
-  timeline.push({
-    type: jsPsychHtmlButtonResponse,
-    choices: [],
-    stimulus: () => {
-      const last = jsPsych.data.get().last(1).values()[0];
-      const saved = usePipe && last && last.success;
-      return `<div class="text-page"><h2>Thank you!</h2>
-        ${saved
-          ? "<p class='lead'>Your responses have been saved. You can now close this tab.</p>"
-          : `<p class='lead'>${usePipe ? "We could not save your responses automatically." : "Saving to the server is turned off (test mode)."}
-             Please click below to download your data file${usePipe ? " and send it to the study team" : ""}.</p>
-             <p><button class="jspsych-btn" id="dl-btn">Download data file</button></p>`}
-        <pre id="autopilot-output" style="display:none"></pre></div>`;
-    },
-    on_load: () => {
-      document.getElementById("dl-btn")?.addEventListener("click", () => {
-        const blob = new Blob([dataString()], { type: "text/csv" });
-        const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: filename() });
-        a.click();
-      });
-      if (AUTOPILOT) {
-        const pre = document.getElementById("autopilot-output");
-        pre.textContent = dataString();
-        pre.dataset.done = "1";
-      }
-    },
-  });
 
   jsPsych.run(timeline);
 })();

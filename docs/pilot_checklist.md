@@ -3,8 +3,8 @@
 Send the **pilot link** (`.../experiment/?pilot=1`). Ideally sit with 1–2 pilot participants while they do it (think-aloud). Message the rest.
 
 ## Before sending
-- [ ] `config.js` has the DataPipe experiment ID; DataPipe data collection and condition assignment (4 conditions) are both **on**.
-- [ ] You did one run yourself with `?pilot=1` and a `pilot_*.csv` appeared in the OSF data component.
+- [ ] `config.js` has the 12-character DataPipe experiment ID (pushed to GitHub). In DataPipe, **Accept new data** and condition assignment (4 conditions) are both **on**.
+- [ ] You did one run yourself with `?pilot=1` and a `pilot_*.csv` appeared in the Google Drive folder. Its `list_source` column says `datapipe`, not `random`.
 - [ ] The link opens on Chrome, Edge and Firefox; on a phone it shows the "needs a computer" message.
 
 ## Ask pilot participants afterwards (2 min)

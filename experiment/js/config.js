@@ -1,8 +1,8 @@
-// Study configuration. Fill DATAPIPE_EXPERIMENT_ID after creating the experiment on
-// https://pipe.jspsych.org (linked to your OSF project; enable data collection + condition assignment with 4 conditions).
+// Study configuration. Fill DATAPIPE_EXPERIMENT_ID (12 characters) after creating the experiment on
+// https://pipe.jspsych.org with Google Drive storage; turn on "Accept new data" + condition assignment (4 conditions).
 const CONFIG = {
-  STUDY_VERSION: "0.2.0",
-  DATAPIPE_EXPERIMENT_ID: "", // e.g. "AbC123xYz" — leave empty to fall back to local download
+  STUDY_VERSION: "0.3.0",
+  DATAPIPE_EXPERIMENT_ID: "", // leave empty to fall back to local download
   STIMULI_URL: "stimuli/stimuli.json",
   TEAM: "Team 22 (Neuroeconomics course): Nitin Reddy & Kavish Kapoor",
   CONTACT: "", // optional contact email shown on the consent page

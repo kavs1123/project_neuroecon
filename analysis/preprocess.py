@@ -16,10 +16,12 @@ from common import (ATTN_MAX_INTENT, FRAME_CODE, MIN_MEDIAN_RT_MS, MIN_TRIAL_RT_
                     TRIAL_LOGRT_SD, URG_CODE, score_crt)
 
 KEYS = ["participant_id", "scenario_id", "is_practice"]
+skipped = []  # files with no trials (declined consent, failed device check)
 
 
 def load_raw(raw_dir, include_pilot=False, only_pilot=False):
     frames, withdrawn = [], []
+    global skipped
     for f in sorted(Path(raw_dir).glob("*.csv")):
         df = pd.read_csv(f, low_memory=False)
         is_pilot = f.name.startswith("pilot_") or ("pilot" in df.columns and (df["pilot"] == 1).any())
@@ -27,6 +29,9 @@ def load_raw(raw_dir, include_pilot=False, only_pilot=False):
             continue
         if "withdrawn" in df.columns:
             withdrawn.append(str(df["participant_id"].iloc[0]))
+            continue
+        if "declined" in df.columns or "task" not in df.columns or not (df["task"] == "offer").any():
+            skipped.append(f.name)  # declined consent / failed device check: no trials
             continue
         df["source_file"] = f.name
         frames.append(df)
@@ -123,6 +128,7 @@ def main():
     log = {
         "files_participants": int(len(people)) + len(withdrawn),
         "withdrawn_at_reconsent": len(withdrawn),
+        "no_trial_files_skipped": len(skipped),
         "excluded_participants": people.loc[people["excluded"], "exclusion_reason"].value_counts().to_dict(),
         "valid_participants": int((~people["excluded"]).sum()),
         "per_list_valid": people.loc[~people["excluded"], "list"].value_counts().sort_index().to_dict(),
