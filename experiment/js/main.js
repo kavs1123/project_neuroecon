@@ -66,16 +66,11 @@
   const stim = await (await fetch(CONFIG.STIMULI_URL, { cache: "no-store" })).json();
   if (DEBUG) Lists.check(stim);
 
-  // ---------- participant & list ----------
+  // ---------- counterbalancing list ----------
+  // Assigned by the "list_assignment" step AFTER consent, device check and instructions, so people who only
+  // open the link (or reload it) do not use up a DataPipe condition. Order: URL ?list= > DataPipe > random.
   let list = params.has("list") ? Number(params.get("list")) : null;
-  let listSource = "url";
-  if (list === null && usePipe) {
-    try {
-      const c = await jsPsychExtensionPipe.getCondition(CONFIG.DATAPIPE_EXPERIMENT_ID);
-      if (Number.isInteger(c)) { list = c % Lists.N_LISTS; listSource = "datapipe"; }
-    } catch (e) { console.warn("DataPipe condition assignment failed", e); }
-  }
-  if (list === null || Number.isNaN(list)) { list = crypto.getRandomValues(new Uint8Array(1))[0] % Lists.N_LISTS; listSource = "random"; }
+  let listSource = list === null || Number.isNaN(list) ? null : "url";
 
   // Decision-button side is counterbalanced across participants.
   const coin = () => crypto.getRandomValues(new Uint8Array(1))[0] < 128;
@@ -83,8 +78,6 @@
 
   jsPsych.data.addProperties({
     participant_id: pid,
-    list,
-    list_source: listSource,
     accept_button_side: buttonOrder[0] === ACCEPT ? "left" : "right",
     pilot: PILOT ? 1 : 0,
     study_version: CONFIG.STUDY_VERSION,
@@ -244,6 +237,33 @@
     on_finish: () => Chat.budget.set(CONFIG.PRACTICE_CHECKS),
   }, () => Auto.instructions()));
 
+  timeline.push({
+    type: jsPsychCallFunction,
+    async: true,
+    data: { task: "list_assignment" },
+    func: (done) => {
+      const finish = () => {
+        jsPsych.data.addProperties({ list, list_source: listSource }); // also back-fills earlier rows
+        done({ list, list_source: listSource });
+      };
+      const fallback = () => {
+        list = crypto.getRandomValues(new Uint8Array(1))[0] % Lists.N_LISTS;
+        listSource = "random";
+        finish();
+      };
+      if (listSource === "url") return finish();
+      if (!usePipe) return fallback();
+      jsPsychExtensionPipe.getCondition(CONFIG.DATAPIPE_EXPERIMENT_ID)
+        .then((c) => {
+          if (!Number.isInteger(c)) return fallback();
+          list = c % Lists.N_LISTS;
+          listSource = "datapipe";
+          finish();
+        })
+        .catch((e) => { console.warn("DataPipe condition assignment failed; using a random list", e); fallback(); });
+    },
+  });
+
   // practice: one legit (gain/low), one scam (loss/high) so both screen types are seen
   const [p1, p2] = stim.practice;
   timeline.push(...offerTrial(p1, "gain", "low", "gain_low", { is_practice: 1, trial_num: -2 }));
@@ -257,21 +277,25 @@
     on_finish: () => Chat.budget.set(CONFIG.CHECK_BUDGET),
   }, () => Auto.click("#jspsych-html-button-response-btngroup button")));
 
-  // main trials: randomised order, attention check inserted in the middle range
-  const main = jsPsych.randomization.shuffle(Lists.build(stim, list));
+  // main trials: one block per list (only the assigned list runs); randomised order, attention check in the middle range
   const [lo, hi] = CONFIG.ATTENTION_CHECK_RANGE;
-  const attPos = lo + Math.floor(Math.random() * (hi - lo + 1));
-  main.splice(attPos, 0, { sc: stim.attention_check, frame: "none", urgency: "none", cell: "attention" });
-  main.forEach((t, i) => {
-    timeline.push(...offerTrial(t.sc, t.frame, t.urgency, t.cell, { is_practice: 0, trial_num: i + 1 }));
-    if (i + 1 === CONFIG.BREAK_AFTER) {
-      timeline.push(ap({
-        type: jsPsychHtmlButtonResponse,
-        stimulus: `<div class="text-page"><h2>Halfway there</h2><p class="lead">Take a short breath if you like, then continue.</p></div>`,
-        choices: ["Continue"], data: { task: "break" },
-      }, () => Auto.click("#jspsych-html-button-response-btngroup button")));
-    }
-  });
+  for (let L = 0; L < Lists.N_LISTS; L++) {
+    const block = [];
+    const main = jsPsych.randomization.shuffle(Lists.build(stim, L));
+    const attPos = lo + Math.floor(Math.random() * (hi - lo + 1));
+    main.splice(attPos, 0, { sc: stim.attention_check, frame: "none", urgency: "none", cell: "attention" });
+    main.forEach((t, i) => {
+      block.push(...offerTrial(t.sc, t.frame, t.urgency, t.cell, { is_practice: 0, trial_num: i + 1 }));
+      if (i + 1 === CONFIG.BREAK_AFTER) {
+        block.push(ap({
+          type: jsPsychHtmlButtonResponse,
+          stimulus: `<div class="text-page"><h2>Halfway there</h2><p class="lead">Take a short breath if you like, then continue.</p></div>`,
+          choices: ["Continue"], data: { task: "break" },
+        }, () => Auto.click("#jspsych-html-button-response-btngroup button")));
+      }
+    });
+    timeline.push({ timeline: block, conditional_function: () => list === L });
+  }
 
   const form = (html, task, label = "Continue") => ap({
     type: jsPsychSurveyHtmlForm, html, button_label: label, data: { task },

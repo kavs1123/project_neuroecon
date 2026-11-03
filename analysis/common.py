@@ -17,7 +17,8 @@ SCAM_CODE = {"legit": -0.5, "scam": 0.5}
 
 # Researcher test sessions (run by the team, who know the hypotheses): never analysed.
 # 66g2sjysbg = Kavish's end-to-end DataPipe test on 3 Nov 2026 (not tagged as pilot).
-TEST_SESSIONS = {"66g2sjysbg"}
+# ehnxg42vhf = Kavish's v0.4 pilot-link test on 3 Nov 2026.
+TEST_SESSIONS = {"66g2sjysbg", "ehnxg42vhf"}
 
 # Exclusion thresholds (docs/analysis_plan.md §3)
 MIN_MEDIAN_RT_MS = 3000

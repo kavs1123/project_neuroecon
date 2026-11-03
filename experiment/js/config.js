@@ -1,7 +1,7 @@
 // Study configuration. DATAPIPE_EXPERIMENT_ID (12 characters) comes from https://pipe.jspsych.org
 // (Google Drive storage; "Accept new data" + condition assignment with 4 conditions in sequence).
 const CONFIG = {
-  STUDY_VERSION: "0.4.0",
+  STUDY_VERSION: "0.4.1", // also bump the ?v= tags in index.html
   DATAPIPE_EXPERIMENT_ID: "sKyyU2rUm4BB", // leave empty to fall back to local download
   STIMULI_URL: "stimuli/stimuli.json",
   TEAM: "Team 22 (Neuroeconomics course): Nitin Reddy & Kavish Kapoor",

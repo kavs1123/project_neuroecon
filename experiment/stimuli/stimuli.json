@@ -1,5 +1,5 @@
 {
-  "_readme": "Stimulus battery v0.3 (DRAFT for team realism review). Each scenario is framing/urgency-neutral; the renderer inserts {FRAME} and {URGENCY} slot text from 'frames' and 'urgency' below, giving 4 variants per scenario. All company names, people, phone numbers and handles are fictional. Phone numbers use the UK Ofcom fiction range (+44 7700 900xxx). Cell assignment is NOT stored here: lists.js assigns scenario i (within type) to cell (i + list) % 4, cells = [gain_high, gain_low, loss_high, loss_low]. v0.2: header shows display name only (number/business status moved into the 'Sender profile' cue); solicitation style, sender naming and emoji use mixed across scam/legit so they are not trivial giveaways; emojis removed from frame lines (the warning emoji confounded loss-frame with urgency). v0.3: 12 scam + 12 legit active scenarios (3 per type x cell per list); 8 near-duplicate domains moved to 'reserve_scenarios' (not shown) to shorten the session.",
+  "_readme": "Stimulus battery v0.4 (DRAFT for team realism review). Each scenario is framing/urgency-neutral; the renderer inserts {FRAME} and {URGENCY} slot text from 'frames' and 'urgency' below, giving 4 variants per scenario. All company names, people, phone numbers and handles are fictional. Phone numbers use the UK Ofcom fiction range (+44 7700 900xxx). Cell assignment is NOT stored here: lists.js assigns scenario i (within type) to cell (i + list) % 4, cells = [gain_high, gain_low, loss_high, loss_low]. v0.2: header shows display name only (number/business status moved into the 'Sender profile' cue); solicitation style, sender naming and emoji use mixed across scam/legit so they are not trivial giveaways; emojis removed from frame lines (the warning emoji confounded loss-frame with urgency). v0.3: 12 scam + 12 legit active scenarios (3 per type x cell per list); 8 near-duplicate domains moved to 'reserve_scenarios' (not shown) to shorten the session. v0.4: selection steps no longer separate the types (5 scams now mention a fake onboarding step; 3 legit gigs start without an interview), after the pilot showed 'no interview = scam' was a giveaway.",
   "constants": {
     "amount": "₹2,000",
     "scam_fee": "₹500",
@@ -113,7 +113,7 @@
       "messages": [
         "Hi! I'm Riya from Kestrel Review Hub 😊 We found your profile on a job portal.",
         "We're hiring part-time remote reviewers: rate hotels online from home, 10–15 min per task, earn ₹800–1,200 daily.",
-        "Payouts go straight to your bank account after each set of 3 tasks.",
+        "Our HR team will do a quick 5-minute onboarding call before your first task.",
         "{FRAME}",
         "{URGENCY}"
       ],
@@ -189,7 +189,7 @@
       "messages": [
         "Hi, Meera from ScribeNow Online 🙂 Are you comfortable typing in English?",
         "Transcribe short audio clips (1–2 min). Pay is ₹250 per clip, around ₹1,200 a day for 1–2 hours.",
-        "Work fully from your phone or laptop.",
+        "First there is a short typing test to check your speed, then you can start.",
         "{FRAME}",
         "{URGENCY}"
       ],
@@ -227,7 +227,7 @@
       "messages": [
         "Hey, Rahul from ReelRank Studio here. You applied for part-time work on a job portal, so we're reaching out.",
         "Rate movies on ticketing sites to improve their visibility. ₹200 per rating.",
-        "Easily earn ₹1,000+ per day from home.",
+        "There is a short orientation video and a quiz before your first rating task.",
         "{FRAME}",
         "{URGENCY}"
       ],
@@ -265,7 +265,7 @@
       "messages": [
         "Hello. Arjun from ClickVerify Network. Looking for part-time remote work?",
         "Watch and verify online ads for advertisers. ₹40 per ad, about 25 ads per day.",
-        "Payment is credited daily to your wallet.",
+        "Our coordinator will verify your profile on a quick call, then add you to the team.",
         "{FRAME}",
         "{URGENCY}"
       ],
@@ -322,7 +322,7 @@
       "messages": [
         "Hi! Kavya from OpinionVault. We received your application for our paid survey panel.",
         "Answer brand surveys for ₹300 each, 3–5 surveys a day.",
-        "Earn ₹20,000+ per month part-time.",
+        "You will do one sample survey as a trial, and our panel manager will review it.",
         "{FRAME}",
         "{URGENCY}"
       ],
@@ -360,7 +360,7 @@
       "messages": [
         "Hi, this is HR at Ashvin Retail. We received your application for remote customer support.",
         "Part-time, 20 hrs/week, ₹18,000/month, handling customer chats on our website.",
-        "We'll schedule a short phone screening followed by a written test.",
+        "If you are interested, we can start your onboarding this week. No interview needed for part-time support roles.",
         "{FRAME}",
         "{URGENCY}"
       ],
@@ -417,7 +417,7 @@
       "messages": [
         "Hello! This is Harbor & Pine, a lifestyle brand. We came across your profile and think you'd fit our social media internship 🙂",
         "Hybrid, 3 months, ₹10,000/month stipend, planning posts and tracking engagement.",
-        "Next step is a short assignment and a call with our marketing lead.",
+        "We usually skip interviews for interns and start with a paid two-week trial.",
         "{FRAME}",
         "{URGENCY}"
       ],
@@ -512,7 +512,7 @@
       "messages": [
         "Hello, Ankit from Ledgerline Associates (chartered accountants). A former colleague of yours recommended you to us.",
         "Part-time bookkeeping assistant, remote, 15 hrs/week, ₹14,000/month.",
-        "Next step: a short Excel test and an interview with a partner.",
+        "You could start with a few hours next week to see if it suits you.",
         "{FRAME}",
         "{URGENCY}"
       ],
