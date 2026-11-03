@@ -59,8 +59,8 @@ const Pages = (() => {
         ${likert("urg_check", "Not at all urgent", "Extremely urgent")}</div>
       <div class="q"><div class="qt">How was the ₹2,000 described in this message?</div>
         <div class="choice-row">
-          <label><input type="radio" name="frame_check" value="gain" required> as money I could <b>claim / gain</b></label>
-          <label><input type="radio" name="frame_check" value="loss"> as money already reserved for me that I could <b>lose</b></label>
+          <label><input type="radio" name="frame_check" value="gain" required> as <b>extra money I would get</b> if I accepted</label>
+          <label><input type="radio" name="frame_check" value="loss"> as money <b>already mine that I would lose</b> if I didn't accept</label>
         </div></div>
       <div class="q"><div class="qt">How did you make this decision?</div>
         ${likert("deliberation", "Mostly on gut feeling", "Carefully weighed the details")}</div>
@@ -145,8 +145,8 @@ const Pages = (() => {
       All names, numbers and companies were fictional.</p>
       <p>We were studying whether two common scam techniques change people's decisions:</p>
       <ul>
-        <li><b>Framing:</b> describing the payoff as something to <i>gain</i> ("claim your ₹2,000") versus something you'll <i>lose</i>
-            ("avoid losing the ₹2,000 reserved in your name").</li>
+        <li><b>Framing:</b> describing the same ₹2,000 as something extra you <i>gain</i> by accepting ("you'll get an extra ₹2,000")
+            versus something already yours that you <i>lose</i> by not accepting ("₹2,000 has already been credited… it will be taken back").</li>
         <li><b>Urgency:</b> countdown timers and "only 2 slots left" messages versus no time pressure.</li>
         <li>We also limited how many details you could check, to see how people decide when checking is costly.</li>
       </ul>

@@ -1,5 +1,5 @@
 {
-  "_readme": "Stimulus battery v0.4 (DRAFT for team realism review). Each scenario is framing/urgency-neutral; the renderer inserts {FRAME} and {URGENCY} slot text from 'frames' and 'urgency' below, giving 4 variants per scenario. All company names, people, phone numbers and handles are fictional. Phone numbers use the UK Ofcom fiction range (+44 7700 900xxx). Cell assignment is NOT stored here: lists.js assigns scenario i (within type) to cell (i + list) % 4, cells = [gain_high, gain_low, loss_high, loss_low]. v0.2: header shows display name only (number/business status moved into the 'Sender profile' cue); solicitation style, sender naming and emoji use mixed across scam/legit so they are not trivial giveaways; emojis removed from frame lines (the warning emoji confounded loss-frame with urgency). v0.3: 12 scam + 12 legit active scenarios (3 per type x cell per list); 8 near-duplicate domains moved to 'reserve_scenarios' (not shown) to shorten the session. v0.4: selection steps no longer separate the types (5 scams now mention a fake onboarding step; 3 legit gigs start without an interview), after the pilot showed 'no interview = scam' was a giveaway.",
+  "_readme": "Stimulus battery v0.5 (DRAFT for team realism review). Each scenario is framing/urgency-neutral; the renderer inserts {FRAME} and {URGENCY} slot text from 'frames' and 'urgency' below, giving 4 variants per scenario. All company names, people, phone numbers and handles are fictional. Phone numbers use the UK Ofcom fiction range (+44 7700 900xxx). Cell assignment is NOT stored here: lists.js assigns scenario i (within type) to cell (i + list) % 4, cells = [gain_high, gain_low, loss_high, loss_low]. v0.2: header shows display name only (number/business status moved into the 'Sender profile' cue); solicitation style, sender naming and emoji use mixed across scam/legit so they are not trivial giveaways; emojis removed from frame lines (the warning emoji confounded loss-frame with urgency). v0.3: 12 scam + 12 legit active scenarios (3 per type x cell per list); 8 near-duplicate domains moved to 'reserve_scenarios' (not shown) to shorten the session. v0.4: selection steps no longer separate the types (5 scams now mention a fake onboarding step; 3 legit gigs start without an interview), after the pilot showed 'no interview = scam' was a giveaway. v0.5: frame lines rewritten around the reference point (gain = extra money you'd get by accepting; loss = money already yours that you'd lose by not accepting), no 'now' in frame lines (urgency only comes from the urgency slot); pilot feedback said the old gain lines ('claim your', 'secure') read as losses.",
   "constants": {
     "amount": "₹2,000",
     "scam_fee": "₹500",
@@ -12,12 +12,12 @@
   },
   "frames": {
     "scam": {
-      "gain": "Complete your registration now to claim your {amount} joining commission.",
-      "loss": "Complete your registration now to avoid losing the {amount} joining commission already reserved in your name."
+      "gain": "When you register, you'll get an extra {amount} joining commission on top of your task earnings.",
+      "loss": "A {amount} joining commission has already been credited to your account. If you don't register, it will be taken back."
     },
     "legit": {
-      "gain": "Confirm your interview slot to secure the {amount} joining bonus offered for this role.",
-      "loss": "Confirm your interview slot so you don't lose the {amount} joining bonus reserved for your profile."
+      "gain": "If you join, you'll also get a {amount} joining bonus with your first payment.",
+      "loss": "A {amount} joining bonus has already been set aside for you. If you don't go ahead, you will lose it."
     }
   },
   "urgency": {

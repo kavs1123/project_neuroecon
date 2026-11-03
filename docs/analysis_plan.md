@@ -30,7 +30,7 @@ Status: **DRAFT v0.3, 4 Nov 2026** (v0.2: models pinned to the implemented stats
 | Trial | `rt_ms` | time from offer onset to decision click (missing for expired offers) |
 | Trial | `intent` | compliance-intent slider, 0–100 (**primary DV**; asked after every offer, including expired ones) |
 | Trial | `urg_check` | felt urgency, 1–7 (manipulation check) |
-| Trial | `frame_check` | "How was the ₹2,000 described?" claim/gain vs reserved/could lose (manipulation check; reworded in v0.3.1) |
+| Trial | `frame_check` | "How was the ₹2,000 described?" extra money I would get if I accepted (gain) vs money already mine that I would lose (loss). Manipulation check; reworded in v0.3.1 and v0.5 together with the frame lines |
 | Trial | `heuristic` | 8 − `deliberation` ("How did you make this decision?" 1 = gut feeling … 7 = carefully weighed details); high = heuristic |
 | Trial | `n_cues` | detail boxes opened (0–3; budget-limited) |
 | Trial | `checks_left_before` | checks remaining when the offer appeared |
