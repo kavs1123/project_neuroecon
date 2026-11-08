@@ -16,8 +16,8 @@
       "loss": "A {amount} joining commission has already been reserved in your name. If you don't register, it will go to the next applicant."
     },
     "legit": {
-      "gain": "If you join, you'll also get a {amount} joining bonus with your first payment.",
-      "loss": "A {amount} joining bonus has already been set aside for you. If you don't go ahead, you will lose it."
+      "gain": "The offer includes a {amount} signing bonus with your first payment.",
+      "loss": "A {amount} signing bonus has already been allocated to you. If you don't go ahead, you will lose it."
     }
   },
   "urgency": {
@@ -34,9 +34,9 @@
     },
     "legit": {
       "high": {
-        "text": "⏳ Only {slots} interview slots left for this round — the slot booking closes when the timer ends.",
+        "text": "⏳ Only {slots} spots left for this onboarding round — confirmation closes when the timer ends.",
         "timer": true,
-        "timer_label": "Slot booking closes in"
+        "timer_label": "Offer expires in"
       },
       "low": {
         "text": "No rush — applications stay open until the end of the month, reply whenever it's convenient.",

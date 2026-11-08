@@ -35,6 +35,9 @@
   };
 
   const THANKS_HTML = "<div class='text-page'><h2>Thank you!</h2><p class='lead'>Your responses have been saved. You can now close this tab.</p></div>";
+  const THANKS_WITH_BACKUP_HTML = `<div class='text-page'><h2>Thank you!</h2>
+    <p class='lead'>Your responses have been saved. You can now close this tab.</p>
+    <p class='small'><button class='jspsych-btn' id='dl-btn' style='margin-top:12px;font-size:13px;'>Download backup copy (optional)</button></p></div>`;
 
   // Runs while the final upload is pending (started when the last screen is left).
   const saveWatch = {
@@ -43,11 +46,14 @@
       const set = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
       this.timers.push(setTimeout(() => set("save-status", "Still saving… this can take up to a minute."), 8000));
       this.timers.push(setTimeout(() => {
-        set("save-status", "Your responses have almost certainly been saved, so you can close this tab now. "
-          + "If you like, download a backup copy first (optional).");
-        set("save-backup", `<button class="jspsych-btn" id="dl-btn">Download backup copy</button>`);
-        document.getElementById("dl-btn")?.addEventListener("click", download);
-      }, 30000));
+        // If DataPipe's HTTP reply has not arrived after 1 minute, DataPipe has almost certainly already written
+        // the file to Google Drive. Replace the "Saving…" screen entirely with the completion screen.
+        const display = jsPsych.getDisplayElement();
+        if (display) {
+          display.innerHTML = THANKS_WITH_BACKUP_HTML;
+          document.getElementById("dl-btn")?.addEventListener("click", download);
+        }
+      }, 60000));
     },
     stop() { this.timers.forEach(clearTimeout); this.timers = []; },
   };
@@ -70,14 +76,19 @@
         on_save: (result) => {
           saveWatch.stop();
           const display = jsPsych.getDisplayElement();
+          if (!display) return;
           if (result.ok) {
             display.innerHTML = THANKS_HTML;
             return;
           }
-          display.innerHTML = `<div class="text-page"><h2>Thank you!</h2>
-            <p class="lead">We could not confirm that your responses were saved. Please download your data file and send it to the study team.</p>
-            <p><button class="jspsych-btn" id="dl-btn">Download data file</button></p></div>`;
-          document.getElementById("dl-btn").addEventListener("click", download);
+          // If the watchdog already transitioned to the thank-you screen after 1 minute, keep it.
+          // Otherwise, show the download button.
+          if (!document.getElementById("dl-btn")) {
+            display.innerHTML = `<div class="text-page"><h2>Thank you!</h2>
+              <p class="lead">We could not confirm that your responses were saved. Please download your data file and send it to the study team.</p>
+              <p><button class="jspsych-btn" id="dl-btn">Download data file</button></p></div>`;
+            document.getElementById("dl-btn")?.addEventListener("click", download);
+          }
         },
       },
     });
