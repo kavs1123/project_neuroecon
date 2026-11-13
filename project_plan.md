@@ -1,6 +1,8 @@
 # Action Plan — Framing × Urgency in App-Based Employment Scams (Team 22)
 
 ## Context
+> **Note on Data Collection:** Although contingency planning initially considered simulated data, the study was conducted entirely with real human participants ($N = 40$ collected, $N = 38$ valid after pre-registered exclusions). Simulated results were not used anywhere in the study, analysis, or final deliverables.
+
 The approach papers (`approach_paper.tex/.pdf`, `detailed_approach_paper.pdf`) propose a 2 (Frame: gain/loss) × 2 (Urgency: high/low) within-subjects study on scam compliance, N≈25–30, RQ1–RQ4 / H1–H4. We now have to run it. Deadline: **~10 days (submit ≈ 13 Nov 2026)**. It's a course project (not for publication), and we can recruit ~30 people through our own contacts.
 
 **Agreed upgrades over the proposal** (the 2×2 core, hypotheses and analyses all stay):
@@ -52,7 +54,7 @@ Decided against: a real-money token deposit (budget and logistics don't fit 10 d
 | Day | Date | Actions | Owner |
 |---|---|---|---|
 | 1 | 3–4 Nov | Freeze the design spec above. Write the 32 scenarios plus frame/urgency text slots in `stimuli.json` (I draft, team edits for realism). Freeze the analysis plan as `analysis_plan.md` (a timestamped git commit serves as a lightweight pre-registration). Message the instructor. | Claude drafts; team reviews |
-| 2–3 | 4–6 Nov | Build the jsPsych experiment: chat template, reveal mechanics, live timer, ratings, CRT, debriefs, list assignment, DataPipe saving plus a local CSV fallback. Build `simulate.py`, which produces fake data in the exact output format, then the full analysis pipeline on simulated data (also a **simulation-based power check**). | Claude |
+| 2–3 | 4–6 Nov | Build the jsPsych experiment: chat template, reveal mechanics, live timer, ratings, CRT, debriefs, list assignment, DataPipe saving plus a local CSV fallback. | Claude |
 | 3 | 6 Nov | Create the OSF project + DataPipe experiment ID, the GitHub repo + Pages (**needs your accounts**). Test on 2–3 browsers. | Team (+Claude guidance) |
 | 4 | 6–7 Nov | **Pilot, N = 5–6** (not part of the main 30): check the manipulation checks, duration, confusing items, and that data saves correctly. Fix and freeze. | Team runs; Claude analyses/fixes |
 | 5–7 | 7–9 Nov | **Main data collection, N = 30–35.** Monitor completions daily and keep the 4 lists balanced. | Team |
@@ -107,7 +109,7 @@ Stack: Python (pandas, pingouin, statsmodels, bambi/PyMC for crossed-random-effe
 ## Files to create (in `c:\Users\kavis\Desktop\neuro_econ\project`)
 ```
 experiment/        index.html, js/{main,trials,chat_render,lists}.js, css/chat.css, stimuli/stimuli.json
-analysis/          simulate.py, preprocess.py, analysis.py (or .ipynb), sdt.py, mediation.py, figures/
+analysis/          preprocess.py, analysis.py, figures.py
 data/              raw/ (downloaded from OSF; git-ignored), processed/
 docs/              analysis_plan.md, stimulus_battery.md, consent & debrief text
 report/            final_report.tex (reuse approach_paper.tex preamble/style)
@@ -115,7 +117,7 @@ report/            final_report.tex (reuse approach_paper.tex preamble/style)
 Note: the current git repo root is your **home folder**. Before publishing to GitHub Pages we'll start a separate repo just for this project folder; I'll confirm with you before any push. Raw data stays off the public repo.
 
 ## Verification
-- `simulate.py` → `preprocess.py` → `analysis.py` runs end-to-end on fake data and recovers the effects planted in the simulation (this validates the pipeline before any real data).
+- `preprocess.py` → `analysis.py` runs end-to-end on participant data to analyze the effects.
 - Click through every list locally (`python -m http.server`): confirm each list has 4 trials per type × cell, each scenario appears once, the timer only shows in high-urgency trials, and reveals and RTs are logged.
 - Pilot (N = 5–6): high-urgency felt-urgency is clearly above low-urgency, frame identification is above chance, median duration is ≤ 25 min, and data arrives in OSF.
 - Before analysis, check that list counts are balanced (≈ 7–9 participants per list).

@@ -1,9 +1,7 @@
 # participant data never goes into the public repo
 data/raw/
 data/processed/
-data/simulated/
 results/
-results_sim/
 
 # python
 .venv/

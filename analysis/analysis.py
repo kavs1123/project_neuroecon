@@ -1,7 +1,6 @@
 """All confirmatory + exploratory analyses from docs/analysis_plan.md.
 
     python analysis/analysis.py --processed data/processed --out results
-    python analysis/analysis.py --processed data/simulated/processed --out results_sim
 
 Writes <out>/results.md (human-readable), <out>/results.json (numbers for the report) and <out>/figures/*.png.
 """

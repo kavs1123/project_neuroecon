@@ -1,7 +1,6 @@
 """Raw jsPsych CSVs (one per participant) -> tidy trial and participant tables + exclusion log.
 
     python analysis/preprocess.py --raw data/raw --out data/processed
-    python analysis/preprocess.py --raw data/simulated/raw --out data/simulated/processed
 
 Pilot files (filename starting 'pilot_' or pilot==1) are skipped unless --include-pilot / --only-pilot is given.
 """

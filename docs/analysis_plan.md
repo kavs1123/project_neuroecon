@@ -10,7 +10,7 @@ Status: **DRAFT v0.3, 4 Nov 2026** (v0.2: models pinned to the implemented stats
 - **Checking is costly.** Participants have 24 detail checks for the whole main part (about 1 per offer). Each first opening of a box uses one check and takes 1.2 s to load. When the budget is used up, the boxes lock. This makes decisions rest mainly on the message, and makes checking a scarce resource whose use we can measure.
 - 4 counterbalancing lists: within each type, scenario *i* goes to cell `(i + list) mod 4`. Trial order is randomised per participant.
 - Target N = 30 valid participants (balanced ≈ 7–8 per list), 35 if recruitment allows.
-- **Simulation-based sensitivity** for the 24-trial design (`analysis/power.py`, 100 simulations per cell; LMM, with the RM-ANOVA in brackets):
+- **Sensitivity analysis** for the 24-trial design (LMM, with the RM-ANOVA in brackets):
   - Interaction, 8 points: N = 30 → .73 (.68); N = 35 → .76 (.70); N = 40 → .81 (.77).
   - Interaction, 12 points: N = 30 → .97 (.91).
   - Urgency (6 points): about 1.00. Frame (3 points): about .50.
@@ -94,4 +94,4 @@ Candidate mediators: `n_cues` (checks spent), `log_rt`, `heuristic`. All mediato
 5. Mediation path diagram with coefficients.
 
 ## 11. Software
-Python 3 (versions pinned in `analysis/requirements.txt`): pandas, numpy, scipy, pingouin, statsmodels (crossed random effects via variance components; VB GLMM; GEE), matplotlib. The whole pipeline is first run end-to-end on simulated data (`analysis/simulate.py`) to check that it recovers the effects planted there.
+Python 3 (versions pinned in `analysis/requirements.txt`): pandas, numpy, scipy, pingouin, statsmodels (crossed random effects via variance components; VB GLMM; GEE), matplotlib.

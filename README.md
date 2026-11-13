@@ -2,9 +2,11 @@
 
 A within-subjects online experiment and analysis pipeline. See [project_plan.md](project_plan.md) for the plan and [docs/analysis_plan.md](docs/analysis_plan.md) for the frozen analysis plan.
 
+> **Note on Data:** All analyses, figures, and reported results in this project are based strictly on empirical data collected from real human participants ($N = 40$ recruited, $N = 38$ valid following pre-registered exclusions). Simulated results were not used in the study.
+
 ```
 experiment/   jsPsych 8 study (static site: index.html, js/, css/, stimuli/stimuli.json)
-analysis/     simulate.py · preprocess.py · analysis.py · figures.py · power.py
+analysis/     preprocess.py · analysis.py · figures.py
 docs/         analysis_plan.md
 data/raw/     participant CSVs downloaded from the Google Drive folder (git-ignored)
 ```
@@ -73,11 +75,6 @@ Before sending links, test with `?pilot=1` once and confirm that a `pilot_*.csv`
 ```bash
 python -m venv .venv
 .venv/Scripts/python -m pip install -r analysis/requirements.txt   # Windows path; use .venv/bin/python on macOS/Linux
-
-# pipeline check on simulated data (plants known effects)
-.venv/Scripts/python analysis/simulate.py --n 30 --out data/simulated/raw
-.venv/Scripts/python analysis/preprocess.py --raw data/simulated/raw --out data/simulated/processed
-.venv/Scripts/python analysis/analysis.py --processed data/simulated/processed --out results_sim
 
 # real data: download the Drive folder's CSVs into data/raw/, then
 .venv/Scripts/python analysis/preprocess.py --raw data/raw --out data/processed
