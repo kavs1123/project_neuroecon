@@ -21,7 +21,12 @@ import pandas as pd
 
 from common import STIMULI, CELLS
 
-DEFAULT_EFFECTS = dict(frame=3.0, urgency=6.0, interaction=8.0, cue_b=-5.0, urg_on_cues=-0.35, p_timeout=0.03)
+DEFAULT_EFFECTS = dict(frame=3.0, urgency=6.0, interaction=8.0, cue_b=-5.0, urg_on_cues=-0.35, p_timeout=0.0)
+
+# Baseline levels calibrated to the real pilot (3 participants, v0.5.2, Nov 2026): scam intent ~19, legit ~61,
+# median decision time ~12 s under the deadline vs ~20 s without, ~8% of high-urgency offers expired,
+# felt urgency 4.8 vs 3.3, frame identification ~65-70%, ~0.9 checks per offer.
+# The planted EFFECTS above are hypothesis values, not estimates from the pilot.
 DEADLINE_S = 20
 
 
@@ -32,7 +37,7 @@ def simulate_participant(pid, list_idx, stim, rng, eff, kind="normal"):
     u = rng.normal(0, 12)            # person: general willingness
     sens = rng.normal(0, 8)          # person: scam discrimination
     cue_tend = rng.normal(0, 0.35)   # person: tendency to check details
-    rt_person = rng.normal(0, 0.3)
+    rt_person = rng.normal(0, 0.2)
     button_side = rng.choice(["left", "right"])
 
     trials = []
@@ -47,7 +52,7 @@ def simulate_participant(pid, list_idx, stim, rng, eff, kind="normal"):
     trials.insert(att_pos, (stim["attention_check"], "check", "none", "none", "attention"))
 
     common = dict(participant_id=pid, list=list_idx, list_source="sim", accept_button_side=button_side,
-                  pilot=0, study_version="sim", start_iso="2026-11-07T10:00:00Z")
+                  pilot=0, study_version="sim", simulated=1, start_iso="2026-11-07T10:00:00Z")
     rows = [dict(task="consent", response=0, rt=4000, trial_type="html-button-response")]
     rows.append(dict(task="browser_check", width=1366, height=768, browser="chrome", mobile=False, os="windows"))
     elapsed = 60000
@@ -75,12 +80,12 @@ def simulate_participant(pid, list_idx, stim, rng, eff, kind="normal"):
             n_cues = 0
         opened = list(rng.choice(["sender", "company", "payment"], size=n_cues, replace=False)) if n_cues else []
         if type_ == "scam":
-            mu = 30 + u - sens + item_eff[sc["id"]] + eff["frame"] * f + eff["urgency"] * g + eff["interaction"] * f * g + eff["cue_b"] * (n_cues - 0.9)
+            mu = 20 + u - sens + item_eff[sc["id"]] + eff["frame"] * f + eff["urgency"] * g + eff["interaction"] * f * g + eff["cue_b"] * (n_cues - 0.9)
         else:
             mu = 62 + u + sens + item_eff[sc["id"]] + 2 * g
         intent = float(np.clip(np.round(mu + rng.normal(0, 15)), 0, 100))
-        accept = int(rng.random() < 1 / (1 + np.exp(-(intent - 50) / 8)))
-        rt = rng.lognormal(np.log(9000) + 0.25 * n_cues - 0.15 * g + rt_person, 0.35)
+        accept = int(rng.random() < 1 / (1 + np.exp(-(intent - 45) / 6)))
+        rt = rng.lognormal(np.log(12000) + 0.25 * n_cues - 0.5 * g + rt_person, 0.28)
         if kind == "speeder":
             rt = rng.lognormal(np.log(1800), 0.2)
         rt = round(rt)
@@ -100,9 +105,9 @@ def simulate_participant(pid, list_idx, stim, rng, eff, kind="normal"):
             dwell_sender_ms=dwell["sender"], dwell_company_ms=dwell["company"], dwell_payment_ms=dwell["payment"],
             opened_sender="sender" in opened, opened_company="company" in opened, opened_payment="payment" in opened,
             first_cue_ms=ev[0]["open"] if ev else None, mouse_tracking_data="[]", **base))
-        urg_check = int(np.clip(np.round(2.8 + 2.4 * (g + 0.5) + rng.normal(0, 1.1)), 1, 7))
-        frame_check = frame if rng.random() < 0.8 else ("loss" if frame == "gain" else "gain")
-        deliberation = int(np.clip(np.round(4 - 1.1 * g + 0.7 * (n_cues - 0.9) + rng.normal(0, 1.2)), 1, 7))
+        urg_check = int(np.clip(np.round(3.3 + 1.6 * (g + 0.5) + rng.normal(0, 1.1)), 1, 7))
+        frame_check = frame if rng.random() < 0.7 else ("loss" if frame == "gain" else "gain")
+        deliberation = int(np.clip(np.round(4 - 0.6 * g + 0.7 * (n_cues - 0.9) + rng.normal(0, 1.2)), 1, 7))
         rows.append(dict(task="ratings", rt=round(rng.lognormal(np.log(8000), 0.3)), intent=intent,
                          urg_check=urg_check, frame_check=frame_check, deliberation=deliberation, **base))
         if t == 12:
